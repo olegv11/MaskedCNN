@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 file(GLOB sources ${CMAKE_SOURCE_DIR}/src/*.cpp)
 file(GLOB headers ${CMAKE_SOURCE_DIR}/include/maskedcnn/*.hpp)
 
-include_directories("${CMAKE_SOURCE_DIR/include" "${CMAKE_SOURCE_DIR}/include/maskedcnn")
+include_directories("${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/include/maskedcnn")
 
 add_executable(maskedcnn
     ${sources} ${headers})
