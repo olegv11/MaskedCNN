@@ -3,6 +3,7 @@
 #include <functional>
 #include <numeric>
 #include <cstring>
+#include "Util.hpp"
 
 namespace MaskedCNN
 {
@@ -38,6 +39,7 @@ public:
 
     void reshape(std::vector<int> &dimensions);
     void reshape(int width, int height, int channels);
+    void resize(const std::vector<int> &dimensions);
     void flatten();
 
     int elementCount() const;
@@ -182,7 +184,7 @@ bool Tensor<T>::sameShape(const Tensor &other) const
 template<typename T>
 void Tensor<T>::reshape(std::vector<int> &dimensions)
 {
-    int newElementCount = std::accumulate(std::begin(dimensions), std::end(dimensions), 1, std::multiplies<double>());
+    int newElementCount = multiplyAllElements(dimensions);
     if (newElementCount != elementCount())
     {
         throw std::runtime_error("Invalid reshape");
@@ -203,6 +205,18 @@ void Tensor<T>::reshape(int width, int height, int channels)
 }
 
 template<typename T>
+void Tensor<T>::resize(const std::vector<int> &dimensions)
+{
+    if (multiplyAllElements(dimensions) != elementCount())
+    {
+        delete[] data;
+        data = new T[elementCount()];
+    }
+
+    std::memset(data, 0, elementCount() * sizeof(T));
+}
+
+template<typename T>
 void Tensor<T>::flatten()
 {
     std::vector<int> newDims(dimensions().size());
@@ -218,7 +232,7 @@ void Tensor<T>::flatten()
 template<typename T>
 int Tensor<T>::elementCount() const
 {
-    return std::accumulate(std::begin(dims), std::end(dims), 1, std::multiplies<double>());
+    return multiplyAllElements(dims);
 }
 
 template<typename T>

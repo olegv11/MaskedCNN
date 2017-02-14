@@ -11,4 +11,9 @@ namespace MaskedCNN
     {
         return (inDim - filterDim + 2 * pad) / stride + 1;
     }
+
+    inline int multiplyAllElements(const std::vector<int> vec)
+    {
+        return std::accumulate(std::begin(dimensions), std::end(dimensions), 1, std::multiplies<double>());
+    }
 }
