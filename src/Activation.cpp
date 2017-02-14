@@ -3,7 +3,7 @@
 namespace MaskedCNN
 {
 
-void ReLu::activate(float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
+void ReLu::activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
 {
     for (int i = 0; i < num; i++)
     {
@@ -12,7 +12,7 @@ void ReLu::activate(float *__restrict__ x, float *__restrict__ y, float *__restr
     }
 }
 
-void Softmax::activate(float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
+void Softmax::activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
 {
     float maxValue = x[0];
     for (int i = 1; i < num; i++)
