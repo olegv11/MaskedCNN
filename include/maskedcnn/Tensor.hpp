@@ -11,13 +11,15 @@ namespace MaskedCNN
 // Better to make it explicit
 class shallow_copy {};
 
+
+// Row-major order
 template<typename T>
 class Tensor
 {
 public:
     Tensor();
     Tensor(std::vector<int> &dimensions);
-    Tensor(int width, int height, int channels);
+    Tensor(int channels, int columns, int rows);
     Tensor(const Tensor<T>& other); // deep copy
     Tensor(const Tensor<T>& other, shallow_copy) noexcept;
     Tensor(Tensor<T>&& other) noexcept;
@@ -25,25 +27,29 @@ public:
     Tensor<T>& operator=(Tensor<T>&& other) noexcept;
     ~Tensor();
 
-    size_t width() const { return dims[0]; }
-    size_t height() const { return dims[1]; }
-    size_t channels() const { return dims[2]; }
+    size_t rows() const { return dims[dimensionCount() - 1]; }
+    size_t columns() const { return dims[dimensionCount() - 2]; }
+    size_t channels() const { return dims[dimensionCount() - 3]; }
 
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
-    T& operator()(int x, int y, int channel);
-    const T& operator()(int x, int y, int channel) const;
+
+    T& operator()(int column, int row);
+    const T& operator()(int column, int row) const;
+
+    T& operator()(int channel, int column, int row);
+    const T& operator()(int channel, int column, int row) const;
 
     bool sameShape(const Tensor& other) const;
 
     void reshape(std::vector<int> &dimensions);
-    void reshape(int width, int height, int channels);
+    void reshape(int rows, int columns, int channels);
     void resize(const std::vector<int> &dimensions);
     void flatten();
     void fillwith(T scalar);
 
-    int elementCount() const;
+    size_t elementCount() const;
     std::vector<int> dimensions() const;
     int dimensionCount() const;
 
@@ -68,8 +74,8 @@ Tensor<T>::Tensor(std::vector<int> &dimensions)
 }
 
 template<typename T>
-Tensor<T>::Tensor(int width, int height, int channels)
-    :dims{width, height, channels}, isShallow(false)
+Tensor<T>::Tensor(int channels, int height, int width)
+    :dims{channels, height, width}, isShallow(false)
 {
     data = new T[elementCount()];
     std::memset(data, 0, elementCount() * sizeof(T));
@@ -156,23 +162,41 @@ const T& Tensor<T>::operator[](size_t index) const
 }
 
 template<typename T>
-T& Tensor<T>::operator()(int x, int y, int channel)
+T& Tensor<T>::operator()(int column, int row)
 {
-    assert(dimensionCount() == 3);
-    assert(x < this->dims[0]);
-    assert(y < this->dims[1]);
-    assert(channel < this->dims[2]);
-    return data[channel * dims[1] * dims[0] + y * dims[0] + x];
+    assert(dimensionCount() == 2);
+    assert(row < this->dims[1]);
+    assert(column < this->dims[0]);
+    return data[column * dims[1] + row];
 }
 
 template<typename T>
-const T& Tensor<T>::operator()(int x, int y, int channel) const
+const T& Tensor<T>::operator()(int column, int row) const
+{
+    assert(dimensionCount() == 2);
+    assert(row < this->dims[1]);
+    assert(column < this->dims[0]);
+    return data[column * dims[1] + row];
+}
+
+template<typename T>
+T& Tensor<T>::operator()(int channel, int column, int row)
+{
+    assert(dimensionCount() == 3);
+    assert(row < this->dims[2]);
+    assert(column < this->dims[1]);
+    assert(channel < this->dims[0]);
+    return data[channel * dims[2] * dims[1] + column * dims[2] + row];
+}
+
+template<typename T>
+const T& Tensor<T>::operator()(int channel, int column, int row) const
 {
    assert(dimensionCount() == 3);
-   assert(x < this->dims[0]);
-   assert(y < this->dims[1]);
-   assert(channel < this->dims[2]);
-   return data[channel * dims[1] * dims[0] + y * dims[0] + x];
+   assert(row < this->dims[2]);
+   assert(column < this->dims[1]);
+   assert(channel < this->dims[0]);
+   return data[channel * dims[2] * dims[1] + column * dims[2] + row];
 }
 
 
@@ -186,7 +210,7 @@ template<typename T>
 void Tensor<T>::reshape(std::vector<int> &dimensions)
 {
     int newElementCount = multiplyAllElements(dimensions);
-    if (newElementCount != elementCount())
+    if (static_cast<size_t>(newElementCount) != elementCount())
     {
         throw std::runtime_error("Invalid reshape");
     }
@@ -208,7 +232,7 @@ void Tensor<T>::reshape(int width, int height, int channels)
 template<typename T>
 void Tensor<T>::resize(const std::vector<int> &dimensions)
 {
-    if (multiplyAllElements(dimensions) != elementCount())
+    if (static_cast<size_t>(multiplyAllElements(dimensions)) != elementCount())
     {
         delete[] data;
         data = new T[elementCount()];
@@ -220,13 +244,8 @@ void Tensor<T>::resize(const std::vector<int> &dimensions)
 template<typename T>
 void Tensor<T>::flatten()
 {
-    std::vector<int> newDims(dimensions().size());
-    newDims[0] = elementCount();
-    for (size_t i = 1; i < newDims.size(); i++)
-    {
-        newDims[i] = 1;
-    }
-
+    std::vector<int> newDims(1);
+    newDims[0] = 1;
     reshape(newDims);
 }
 
@@ -237,7 +256,7 @@ void Tensor<T>::fillwith(T scalar)
 }
 
 template<typename T>
-int Tensor<T>::elementCount() const
+size_t Tensor<T>::elementCount() const
 {
     return multiplyAllElements(dims);
 }
