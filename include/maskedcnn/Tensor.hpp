@@ -41,6 +41,7 @@ public:
     void reshape(int width, int height, int channels);
     void resize(const std::vector<int> &dimensions);
     void flatten();
+    void fillwith(T scalar);
 
     int elementCount() const;
     std::vector<int> dimensions() const;
@@ -213,7 +214,7 @@ void Tensor<T>::resize(const std::vector<int> &dimensions)
         data = new T[elementCount()];
     }
 
-    std::memset(data, 0, elementCount() * sizeof(T));
+    std::fill_n(data, elementCount(), T{0});
 }
 
 template<typename T>
@@ -221,12 +222,18 @@ void Tensor<T>::flatten()
 {
     std::vector<int> newDims(dimensions().size());
     newDims[0] = elementCount();
-    for (int i = 1; i < newDims.size(); i++)
+    for (size_t i = 1; i < newDims.size(); i++)
     {
-        newDims = 1;
+        newDims[i] = 1;
     }
 
     reshape(newDims);
+}
+
+template<typename T>
+void Tensor<T>::fillwith(T scalar)
+{
+    std::fill_n(data, elementCount(), scalar);
 }
 
 template<typename T>
