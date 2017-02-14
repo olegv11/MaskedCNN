@@ -11,7 +11,7 @@ FullyConnectedLayer::FullyConnectedLayer(Tensor<float>&& weights, Tensor<float>&
 {
     neurons = weights.columnLength();
     assert(biases.dimensionCount() == 1);
-    assert(biases.elementCount() == static_cast<size_t>(neurons));
+    assert(biases.elementCount() == neurons);
 
     z.resize({ 1, 1, neurons });
     dy_dz.resize({ 1, 1, neurons });
@@ -62,8 +62,9 @@ void FullyConnectedLayer::calculateGradients(const Tensor<float> &input)
 
 }
 
-void FullyConnectedLayer::backwardPropagate(Tensor<float> &prevDelta)
+void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta)
 {
+    (void)(input);
     Tensor<float> flatDelta(prevDelta, shallow_copy{});
     flatDelta.flatten();
 

@@ -27,9 +27,9 @@ public:
     Tensor<T>& operator=(Tensor<T>&& other) noexcept;
     ~Tensor();
 
-    size_t rowLength() const { return dims[dimensionCount() - 1]; }
-    size_t columnLength() const { return dims[dimensionCount() - 2]; }
-    size_t channelLength() const { return dims[dimensionCount() - 3]; }
+    int rowLength() const { return dims[dimensionCount() - 1]; }
+    int columnLength() const { return dims[dimensionCount() - 2]; }
+    int channelLength() const { return dims[dimensionCount() - 3]; }
 
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
@@ -49,7 +49,7 @@ public:
     void flatten();
     void fillwith(T scalar);
 
-    size_t elementCount() const;
+    int elementCount() const;
     std::vector<int> dimensions() const;
     int dimensionCount() const;
 
@@ -214,7 +214,7 @@ template<typename T>
 void Tensor<T>::reshape(std::vector<int> &dimensions)
 {
     int newElementCount = multiplyAllElements(dimensions);
-    if (static_cast<size_t>(newElementCount) != elementCount())
+    if (newElementCount != elementCount())
     {
         throw std::runtime_error("Invalid reshape");
     }
@@ -236,7 +236,7 @@ void Tensor<T>::reshape(int width, int height, int channels)
 template<typename T>
 void Tensor<T>::resize(const std::vector<int> &dimensions)
 {
-    if (static_cast<size_t>(multiplyAllElements(dimensions)) != elementCount())
+    if (multiplyAllElements(dimensions) != elementCount())
     {
         delete[] data;
         data = new T[elementCount()];
@@ -260,7 +260,7 @@ void Tensor<T>::fillwith(T scalar)
 }
 
 template<typename T>
-size_t Tensor<T>::elementCount() const
+int Tensor<T>::elementCount() const
 {
     return multiplyAllElements(dims);
 }
