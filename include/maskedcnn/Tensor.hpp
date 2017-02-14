@@ -19,7 +19,7 @@ class Tensor
 public:
     Tensor();
     Tensor(std::vector<int> &dimensions);
-    Tensor(int channels, int columns, int rows);
+    Tensor(int channelLength, int columnLength, int rowLength);
     Tensor(const Tensor<T>& other); // deep copy
     Tensor(const Tensor<T>& other, shallow_copy) noexcept;
     Tensor(Tensor<T>&& other) noexcept;
@@ -27,24 +27,24 @@ public:
     Tensor<T>& operator=(Tensor<T>&& other) noexcept;
     ~Tensor();
 
-    size_t rows() const { return dims[dimensionCount() - 1]; }
-    size_t columns() const { return dims[dimensionCount() - 2]; }
-    size_t channels() const { return dims[dimensionCount() - 3]; }
+    size_t rowLength() const { return dims[dimensionCount() - 1]; }
+    size_t columnLength() const { return dims[dimensionCount() - 2]; }
+    size_t channelLength() const { return dims[dimensionCount() - 3]; }
 
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
 
-    T& operator()(int column, int row);
-    const T& operator()(int column, int row) const;
+    T& operator()(int row, int column);
+    const T& operator()(int row, int column) const;
 
-    T& operator()(int channel, int column, int row);
-    const T& operator()(int channel, int column, int row) const;
+    T& operator()(int channel, int row, int column);
+    const T& operator()(int channel, int row, int column) const;
 
     bool sameShape(const Tensor& other) const;
 
     void reshape(std::vector<int> &dimensions);
-    void reshape(int rows, int columns, int channels);
+    void reshape(int rowLength, int columnLength, int channelLength);
     void resize(const std::vector<int> &dimensions);
     void flatten();
     void fillwith(T scalar);
@@ -52,6 +52,10 @@ public:
     size_t elementCount() const;
     std::vector<int> dimensions() const;
     int dimensionCount() const;
+
+    Tensor<T> pad(int horizontalPad, int verticalPad, T padValue) const;
+    Tensor<T> unpad(int horizontalPad, int verticalPad) const;
+
 
 private:
     std::vector<int> dims;
@@ -74,8 +78,8 @@ Tensor<T>::Tensor(std::vector<int> &dimensions)
 }
 
 template<typename T>
-Tensor<T>::Tensor(int channels, int height, int width)
-    :dims{channels, height, width}, isShallow(false)
+Tensor<T>::Tensor(int channelLength, int columnLength, int rowLength)
+    :dims{channelLength, columnLength, rowLength}, isShallow(false)
 {
     data = new T[elementCount()];
     std::memset(data, 0, elementCount() * sizeof(T));
@@ -162,35 +166,35 @@ const T& Tensor<T>::operator[](size_t index) const
 }
 
 template<typename T>
-T& Tensor<T>::operator()(int column, int row)
+T& Tensor<T>::operator()(int row, int column)
 {
     assert(dimensionCount() == 2);
-    assert(row < this->dims[1]);
-    assert(column < this->dims[0]);
-    return data[column * dims[1] + row];
+    assert(column < this->dims[1]);
+    assert(row < this->dims[0]);
+    return data[row * dims[1] + column];
 }
 
 template<typename T>
-const T& Tensor<T>::operator()(int column, int row) const
+const T& Tensor<T>::operator()(int row, int column) const
 {
     assert(dimensionCount() == 2);
-    assert(row < this->dims[1]);
-    assert(column < this->dims[0]);
-    return data[column * dims[1] + row];
+    assert(column < this->dims[1]);
+    assert(row < this->dims[0]);
+    return data[row * dims[1] + column];
 }
 
 template<typename T>
-T& Tensor<T>::operator()(int channel, int column, int row)
+T& Tensor<T>::operator()(int channel, int row, int column)
 {
     assert(dimensionCount() == 3);
-    assert(row < this->dims[2]);
-    assert(column < this->dims[1]);
+    assert(column < this->dims[2]);
+    assert(row < this->dims[1]);
     assert(channel < this->dims[0]);
-    return data[channel * dims[2] * dims[1] + column * dims[2] + row];
+    return data[channel * dims[2] * dims[1] + row * dims[2] + column];
 }
 
 template<typename T>
-const T& Tensor<T>::operator()(int channel, int column, int row) const
+const T& Tensor<T>::operator()(int channel, int row, int column) const
 {
    assert(dimensionCount() == 3);
    assert(row < this->dims[2]);
@@ -271,6 +275,53 @@ template<typename T>
 int Tensor<T>::dimensionCount() const
 {
     return dims.size();
+}
+
+template<typename T>
+Tensor<T> Tensor<T>::pad(int horizontalPad, int verticalPad, T padValue) const
+{
+    assert(this->dimensionCount() == 3);
+
+    int channelLen = channelLength();
+    int rowLen = rowLength();
+    int paddedRowLen = rowLen + 2 * horizontalPad;
+    int columnLen = columnLength();
+    int paddedColumnLen = columnLen + 2 * verticalPad;
+
+    Tensor<T> padded(channelLen, paddedColumnLen, paddedRowLen);
+    padded.fillwith(padValue);
+
+    for (int channel = 0; channel < channelLen; channel++)
+    {
+        for (int i = 0; i < columnLen; i++)
+        {
+            vectorCopy(&padded(channel, verticalPad + i, horizontalPad), this->operator()(channel, i, 0), rowLen);
+        }
+    }
+
+    return padded;
+}
+
+template<typename T>
+Tensor<T> Tensor<T>::unpad(int horizontalPad, int verticalPad) const
+{
+    assert(this->dimensionCount() == 3);
+
+    int channelLen = channelLength();
+    int unpaddedRowLen = rowLength() - 2 * horizontalPad;
+    int unpaddedColumnLen = columnLength() - 2 * verticalPad;
+
+    Tensor<T> unpadded(channelLen, unpaddedColumnLen, unpaddedRowLen);
+
+    for (int channel = 0; channel < channelLen; channel++)
+    {
+        for (int i = 0; i < unpaddedColumnLen; i++)
+        {
+            vectorCopy(&unpadded(channel,i,0), this->operator()(channel, verticalPad + i, horizontalPad), unpaddedRowLen);
+        }
+    }
+
+    return unpadded;
 }
 
 }

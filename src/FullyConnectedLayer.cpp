@@ -9,7 +9,7 @@ namespace MaskedCNN {
 FullyConnectedLayer::FullyConnectedLayer(Tensor<float>&& weights, Tensor<float>&& biases, std::unique_ptr<Activation> activation)
     :Layer(std::move(weights), std::move(biases)), activation(std::move(activation))
 {
-    neurons = weights.columns();
+    neurons = weights.columnLength();
     assert(biases.dimensionCount() == 1);
     assert(biases.elementCount() == static_cast<size_t>(neurons));
 
@@ -27,10 +27,10 @@ void FullyConnectedLayer::forwardPropagate(Tensor<float> &input)
 {
     Tensor<float> flatInput(input, shallow_copy{});
     flatInput.flatten();
-    assert(flatInput.elementCount() == weights.columns());
+    assert(flatInput.elementCount() == weights.columnLength());
 
-    cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.rows(), weights.columns(), 1.0, // z = w*prev_input + b
-                &weights[0], weights.columns(), &flatInput[0], 1, 0.0, &z[0], 1);
+    cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.rowLength(), weights.columnLength(), 1.0, // z = w*prev_input + b
+                &weights[0], weights.columnLength(), &flatInput[0], 1, 0.0, &z[0], 1);
 
     for (int neuron = 0; neuron < neurons; neuron++)
     {
@@ -44,14 +44,14 @@ void FullyConnectedLayer::calculateGradients(const Tensor<float> &input)
 {
     Tensor<float> flatInput(input, shallow_copy{});
     flatInput.flatten();
-    assert(flatInput.elementCount() == weights.columns());
+    assert(flatInput.elementCount() == weights.columnLength());
 
     // de/dz = de/dy * dy/dz
     elementwiseMultiplication(&delta[0], &dy_dz[0], &delta[0], neurons);
 
     vectorCopy(&bias_delta[0], &delta[0], neurons);
 
-    int inputCount = weights.rows();
+    int inputCount = weights.rowLength();
     for (int i = 0; i < neurons; i++)
     {
         for (int j = 0; j < inputCount; j++)
@@ -67,12 +67,12 @@ void FullyConnectedLayer::backwardPropagate(Tensor<float> &prevDelta)
     Tensor<float> flatDelta(prevDelta, shallow_copy{});
     flatDelta.flatten();
 
-    assert(flatDelta.elementCount() == weights.columns());
+    assert(flatDelta.elementCount() == weights.columnLength());
 
     flatDelta.fillwith(0.0);
 
-    cblas_sgemv(CblasRowMajor, CblasTrans, weights.rows(), weights.columns(), 1.0,
-                &weights[0], weights.columns(), &delta[0], 1, 0.0, &flatDelta[0], 1); // setting previous de/dy
+    cblas_sgemv(CblasRowMajor, CblasTrans, weights.rowLength(), weights.columnLength(), 1.0,
+                &weights[0], weights.columnLength(), &delta[0], 1, 0.0, &flatDelta[0], 1); // setting previous de/dy
 
 }
 
