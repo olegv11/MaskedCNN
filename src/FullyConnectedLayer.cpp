@@ -32,10 +32,10 @@ void FullyConnectedLayer::forwardPropagate(Tensor<float> &input)
     cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.rowLength(), weights.columnLength(), 1.0, // z = w*prev_input + b
                 &weights[0], weights.columnLength(), &flatInput[0], 1, 0.0, &z[0], 1);
 
+    activation->activate(&z[0], &output[0], &dy_dz[0], neurons);
     for (int neuron = 0; neuron < neurons; neuron++)
     {
-        z[neuron] += biases[neuron];
-        activation->activate(&z[0], &output[0], &dy_dz[0], neurons);
+        z[neuron] += biases[neuron];        
     }
 }
 
