@@ -57,11 +57,6 @@ void ConvolutionalLayer::forwardPropagate(Tensor<float>& input)
     }
 }
 
-// delta should be equal to de/dy by now
-void ConvolutionalLayer::calculateGradients(const Tensor<float>& input)
-{
-    (void)input;
-}
 
 void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta)
 {

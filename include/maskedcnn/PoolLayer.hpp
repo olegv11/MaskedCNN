@@ -21,7 +21,6 @@ private:
     // Layer interface
 public:
     virtual void forwardPropagate(Tensor<float>& input) override;
-    virtual void calculateGradients(const Tensor<float>& input) override;
     virtual void backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta) override;
     virtual std::vector<int> getOutputDimensions() override;
 };

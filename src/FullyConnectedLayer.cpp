@@ -39,8 +39,9 @@ void FullyConnectedLayer::forwardPropagate(Tensor<float> &input)
     }
 }
 
+
 // delta should be equal to de/dy by now
-void FullyConnectedLayer::calculateGradients(const Tensor<float> &input)
+void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta)
 {
     Tensor<float> flatInput(input, shallow_copy{});
     flatInput.flatten();
@@ -60,11 +61,6 @@ void FullyConnectedLayer::calculateGradients(const Tensor<float> &input)
         }
     }
 
-}
-
-void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta)
-{
-    (void)(input);
     Tensor<float> flatDelta(prevDelta, shallow_copy{});
     flatDelta.flatten();
 

@@ -38,12 +38,6 @@ void PoolLayer::forwardPropagate(Tensor<float>& input)
     }
 }
 
-void PoolLayer::calculateGradients(const Tensor<float>& input)
-{
-    (void)input;
-    // no weights and biases to speak of
-}
-
 void PoolLayer::backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta)
 {
     assert(prevDelta.dimensions() == std::vector<int>({channels, inputHeight, inputWidth}));
