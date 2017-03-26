@@ -10,11 +10,11 @@ void trainOnExample(Tensor<float> *example, int groundTruth);
 int main()
 {
     layers[0].reset(new InputLayer({2}));
-    layers[1].reset(new FullyConnectedLayer(2, 100, std::make_unique<Tanh>()));
-    layers[1]->setSGD(0.001, 0.001, 4, 4, 0.9);
+    layers[1].reset(new FullyConnectedLayer(2, 1000, std::make_unique<ReLu>()));
+    layers[1]->setRMSProp(0.0001, 0.01, 4, 4, 0.9);
     layers[1]->initializeWeightsNormalDistrCorrectedVar();
-    layers[2].reset(new FullyConnectedLayer(100, 2, std::make_unique<Tanh>()));
-    layers[2]->setSGD(0.001, 0.001, 4, 4, 0.9);
+    layers[2].reset(new FullyConnectedLayer(1000, 2, std::make_unique<ReLu>()));
+    layers[2]->setRMSProp(0.0001, 0.01, 4, 4, 0.9);
     layers[2]->initializeWeightsNormalDistrCorrectedVar();
     layers[3].reset(new SoftmaxLayer(2));
 
@@ -32,7 +32,7 @@ int main()
 
     SoftmaxLayer *softmax = dynamic_cast<SoftmaxLayer*>(layers[layers.size() - 1].get());
 
-    for (int epoch = 0; epoch < 1000000; epoch++)
+    for (int epoch = 0; epoch < 100000; epoch++)
     {
         double loss = 0;
         trainOnExample(&example0, 0);

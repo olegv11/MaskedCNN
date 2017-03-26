@@ -31,6 +31,14 @@ void Layer::setSGD(float learningRate, float l2Reg, int numBatch, int numData, f
                 numBatch, numData, momentum);
 }
 
+void Layer::setRMSProp(float learningRate, float l2Reg, int numBatch, int numData, float decay)
+{
+    this->trainer = std::make_unique<RmsProp>(
+                learningRate, l2Reg, weights.elementCount(), biases.elementCount(),
+                numBatch, numData, decay);
+
+}
+
 void Layer::updateParameters()
 {
     if (trainer)
@@ -59,20 +67,20 @@ void Layer::initializeWeightsStandardDistr()
     for (int i = 0; i < weightCount; i++)
     {
         w[i] = d(gen);
-        std::cout << "W " << w[i] << std::endl;
     }
 }
 
+// See:
+//Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification
 void Layer::initializeWeightsNormalDistrCorrectedVar()
 {
-    std::normal_distribution<double> d(0.0, 1.0/std::sqrt(weights.elementCount()));
+    std::normal_distribution<double> d(0.0, std::sqrt(2.0 / weights.elementCount()));
 
     int weightCount = weights.elementCount();
     float *w = weights.dataAddress();
     for (int i = 0; i < weightCount; i++)
     {
         w[i] = d(gen);
-        std::cout << "W " << w[i] << std::endl;
     }
 }
 
