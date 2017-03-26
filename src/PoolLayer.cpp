@@ -10,7 +10,7 @@ PoolLayer::PoolLayer(int channels, int inputWidth, int inputHeight, int windowWi
     delta.resize({channels, inputHeight / windowHeight,inputWidth / windowWidth});
 }
 
-void PoolLayer::forwardPropagate(Tensor<float>& input)
+void PoolLayer::forwardPropagate(const Tensor<float>& input)
 {
     for (int i = 0; i < output.channelLength(); i++)
     {

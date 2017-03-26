@@ -12,29 +12,11 @@ void ReLu::activate(const float *__restrict__ x, float *__restrict__ y, float *_
     }
 }
 
-void Softmax::activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
+void Sigmoid::activate(const float *x, float *y, float *delta, int num)
 {
-    float maxValue = x[0];
-    for (int i = 1; i < num; i++)
-    {
-        if (x[i] > maxValue)
-        {
-            maxValue = x[i];
-        }
-    }
-
-    float sum = 0;
     for (int i = 0; i < num; i++)
     {
-        y[i] = std::exp(x[i] - maxValue);
-        sum += y[i];
-    }
-
-    sum = 1.0 / sum;
-
-    for (int i = 0; i < num; i++)
-    {
-        y[i] *= sum;
+        y[i] = 1.0 / (1.0 + std::exp(-x[i]));
         delta[i] = y[i] * (1 - y[i]);
     }
 }

@@ -16,7 +16,7 @@ public:
     virtual void activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num) override;
 };
 
-class Softmax : public Activation
+class Sigmoid : public Activation
 {
 public:
     virtual void activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num) override;

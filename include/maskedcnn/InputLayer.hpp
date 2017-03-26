@@ -1,22 +1,18 @@
 #pragma once
-#include "Util.hpp"
 #include "Layer.hpp"
-#include "Activation.hpp"
 
 namespace MaskedCNN
 {
 
-class PoolLayer : public Layer
-{
-public:
-    PoolLayer(int channels, int inputWidth, int inputHeight, int windowWidth, int windowHeight);
+class InputLayer : public Layer {
 
-private:
-    int channels;
-    int inputWidth;
-    int inputHeight;
-    int windowWidth;
-    int windowHeight;
+public:
+    InputLayer(const std::vector<int> inputDimensions)
+    : Layer()
+    {
+        output.resize(inputDimensions);
+        delta.resize(inputDimensions);
+    }
 
     // Layer interface
 public:
@@ -26,4 +22,3 @@ public:
 };
 
 }
-

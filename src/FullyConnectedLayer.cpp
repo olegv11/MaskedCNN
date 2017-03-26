@@ -1,51 +1,46 @@
 #include "FullyConnectedLayer.hpp"
 
-
 namespace MaskedCNN {
 
 // Weight: [Neuron Count x Input count]
 // Bias: [Neuron Count]
 
-FullyConnectedLayer::FullyConnectedLayer(Tensor<float>&& weights, Tensor<float>&& biases, std::unique_ptr<Activation> activation)
-    :Layer(std::move(weights), std::move(biases)), activation(std::move(activation))
+FullyConnectedLayer::FullyConnectedLayer(int inputCount, int neurons, std::unique_ptr<Activation> activation)
+    :Layer(Tensor<float>({neurons, inputCount}), Tensor<float>({neurons})), activation(std::move(activation)), neurons(neurons)
 {
-    neurons = weights.columnLength();
-    assert(biases.dimensionCount() == 1);
-    assert(biases.elementCount() == neurons);
-
-    z.resize({ 1, 1, neurons });
-    dy_dz.resize({ 1, 1, neurons });
-    delta.resize({ 1, 1, neurons });
-    output.resize({ 1, 1, neurons });
+    z.resize({ neurons });
+    dy_dz.resize({ neurons });
+    delta.resize({ neurons });
+    output.resize({ neurons });
 
     weight_delta.resize(weights.dimensions());
     bias_delta.resize(biases.dimensions());
 }
 
 
-void FullyConnectedLayer::forwardPropagate(Tensor<float> &input)
+void FullyConnectedLayer::forwardPropagate(const Tensor<float> &input)
 {
-    Tensor<float> flatInput(input, shallow_copy{});
+    Tensor<float> flatInput(const_cast<Tensor<float>&>(input), shallow_copy{});
     flatInput.flatten();
-    assert(flatInput.elementCount() == weights.columnLength());
+    assert(flatInput.elementCount() == weights.rowLength());
 
-    cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.rowLength(), weights.columnLength(), 1.0, // z = w*prev_input + b
-                &weights[0], weights.columnLength(), &flatInput[0], 1, 0.0, &z[0], 1);
+    cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.columnLength(), weights.rowLength(), 1.0, // z = w*prev_input + b
+                weights.dataAddress(), weights.rowLength(), flatInput.dataAddress(), 1, 0.0, z.dataAddress(), 1);
 
-    activation->activate(&z[0], &output[0], &dy_dz[0], neurons);
     for (int neuron = 0; neuron < neurons; neuron++)
     {
-        z[neuron] += biases[neuron];        
+        z[neuron] += biases[neuron];
     }
+    activation->activate(z.dataAddress(), output.dataAddress(), dy_dz.dataAddress(), neurons);
 }
 
 
 // delta should be equal to de/dy by now
 void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta)
 {
-    Tensor<float> flatInput(input, shallow_copy{});
+    Tensor<float> flatInput(const_cast<Tensor<float>&>(input), shallow_copy{});
     flatInput.flatten();
-    assert(flatInput.elementCount() == weights.columnLength());
+    assert(flatInput.elementCount() == weights.rowLength());
 
     // de/dz = de/dy * dy/dz
     elementwiseMultiplication(&delta[0], &dy_dz[0], &delta[0], neurons);
@@ -64,18 +59,18 @@ void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<f
     Tensor<float> flatDelta(prevDelta, shallow_copy{});
     flatDelta.flatten();
 
-    assert(flatDelta.elementCount() == weights.columnLength());
+    assert(flatDelta.elementCount() == weights.rowLength());
 
-    flatDelta.fillwith(0.0);
+    flatDelta.zero();
 
-    cblas_sgemv(CblasRowMajor, CblasTrans, weights.rowLength(), weights.columnLength(), 1.0,
-                &weights[0], weights.columnLength(), &delta[0], 1, 0.0, &flatDelta[0], 1); // setting previous de/dy
+    cblas_sgemv(CblasRowMajor, CblasTrans, weights.columnLength(), weights.rowLength(), 1.0,
+                weights.dataAddress(), weights.rowLength(), delta.dataAddress(), 1, 0.0, flatDelta.dataAddress(), 1); // setting previous de/dy
 
 }
 
 std::vector<int> FullyConnectedLayer::getOutputDimensions()
 {
-    return { 1, 1, neurons };
+    return { neurons };
 }
 
 

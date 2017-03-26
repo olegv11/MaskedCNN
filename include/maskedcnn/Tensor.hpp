@@ -4,7 +4,7 @@
 #include <numeric>
 #include <cstring>
 #include "Util.hpp"
-
+#include <iostream>
 namespace MaskedCNN
 {
 
@@ -19,6 +19,7 @@ class Tensor
 public:
     Tensor();
     Tensor(std::vector<int> &dimensions);
+    Tensor(std::vector<int> &&dimensions);
     Tensor(int channelLength, int columnLength, int rowLength);
     Tensor(int channelLength2, int channelLength, int columnLength, int rowLength);
     Tensor(const Tensor<T>& other); // deep copy
@@ -32,6 +33,8 @@ public:
     int columnLength() const { return dims[dimensionCount() - 2]; }
     int channelLength() const { return dims[dimensionCount() - 3]; }
     int channel2Length() const { return dims[dimensionCount() - 4]; }
+
+    float* dataAddress();
 
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
@@ -53,6 +56,8 @@ public:
     void resize(const std::vector<int> &dimensions);
     void flatten();
     void fillwith(T scalar);
+
+    void zero();
 
     int elementCount() const;
     std::vector<int> dimensions() const;
@@ -77,6 +82,14 @@ Tensor<T>::Tensor()
 template<typename T>
 Tensor<T>::Tensor(std::vector<int> &dimensions)
     :dims(dimensions), isShallow(false)
+{
+    data = new T[elementCount()];
+    std::memset(data, 0, elementCount() * sizeof(T));
+}
+
+template<typename T>
+Tensor<T>::Tensor(std::vector<int> &&dimensions)
+    :dims(std::move(dimensions)), isShallow(false)
 {
     data = new T[elementCount()];
     std::memset(data, 0, elementCount() * sizeof(T));
@@ -164,6 +177,12 @@ Tensor<T>::~Tensor()
     {
         delete[] data;
     }
+}
+
+template<typename T>
+float* Tensor<T>::dataAddress()
+{
+    return data;
 }
 
 template<typename T>
@@ -274,9 +293,10 @@ void Tensor<T>::resize(const std::vector<int> &dimensions)
     if (multiplyAllElements(dimensions) != elementCount())
     {
         delete[] data;
-        data = new T[elementCount()];
+        data = new T[multiplyAllElements(dimensions)];
     }
 
+    dims = dimensions;
     std::fill_n(data, elementCount(), T{0});
 }
 
@@ -284,7 +304,7 @@ template<typename T>
 void Tensor<T>::flatten()
 {
     std::vector<int> newDims(1);
-    newDims[0] = 1;
+    newDims[0] = elementCount();
     reshape(newDims);
 }
 
@@ -292,6 +312,12 @@ template<typename T>
 void Tensor<T>::fillwith(T scalar)
 {
     std::fill_n(data, elementCount(), scalar);
+}
+
+template<typename T>
+void Tensor<T>::zero()
+{
+    memset(data, 0, elementCount() * sizeof(T));
 }
 
 template<typename T>

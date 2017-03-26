@@ -3,13 +3,13 @@
 
 namespace MaskedCNN {
 
-ConvolutionalLayer::ConvolutionalLayer(int width, int height, int inputChannels, std::unique_ptr<Activation> activation, int pad, int stride,
+ConvolutionalLayer::ConvolutionalLayer(int width, int height, int inputChannels, std::unique_ptr<Activation> activation, int stride,
                                        int filterSize, int featureMaps)
-    :Layer(std::move(weights), std::move(biases)), activation(std::move(activation)),
-      pad(pad), stride(stride), filterSize(filterSize), outputChannels(featureMaps)
+    :Layer(), activation(std::move(activation)),
+      stride(stride), filterSize(filterSize), outputChannels(featureMaps)
 {
-    outputSizeX = std::floor((width + pad * 2 - filterSize) / (double)stride + 1);
-    outputSizeY = std::floor((height + pad * 2 - filterSize) / (double)stride + 1);
+    outputSizeX = std::floor((width /* + pad * 2 */ - filterSize) / (double)stride + 1);
+    outputSizeY = std::floor((height /* + pad * 2 */ - filterSize) / (double)stride + 1);
 
     weights.resize({outputChannels, filterSize, filterSize, inputChannels});
     weight_delta.resize({outputChannels, filterSize, filterSize, inputChannels});
@@ -24,7 +24,7 @@ ConvolutionalLayer::ConvolutionalLayer(int width, int height, int inputChannels,
 }
 
 
-void ConvolutionalLayer::forwardPropagate(Tensor<float>& input)
+void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
 {
     for (int d = 0; d < output.dimensionCount(); d++)
     {
@@ -60,9 +60,9 @@ void ConvolutionalLayer::forwardPropagate(Tensor<float>& input)
 
 void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta)
 {
-    prevDelta.fillwith(0.0);
-    weight_delta.fillwith(0.0);
-    bias_delta.fillwith(0.0);
+    prevDelta.zero();
+    weight_delta.zero();
+    bias_delta.zero();
 
     activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
 
@@ -103,7 +103,9 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
 
 std::vector<int> ConvolutionalLayer::getOutputDimensions()
 {
-    return output.dimensions();
+    return {outputChannels, outputSizeY, outputSizeX};
 }
+
+
 
 }
