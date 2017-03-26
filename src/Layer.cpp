@@ -23,11 +23,11 @@ void Layer::setTrainer(std::unique_ptr<TrainingRegime> trainer)
     this->trainer.swap(trainer);
 }
 
-void Layer::setSGD(float learningRate, float l2Reg, int numBatch, int numData)
+void Layer::setSGD(float learningRate, float l2Reg, int numBatch, int numData, float momentum)
 {
     this->trainer = std::make_unique<StochasticGradientDescent>(
                 learningRate, l2Reg, weights.elementCount(), biases.elementCount(),
-                numBatch, numData, 0.0);
+                numBatch, numData, momentum);
 }
 
 void Layer::updateParameters()

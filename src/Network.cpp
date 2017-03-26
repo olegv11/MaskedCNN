@@ -10,11 +10,11 @@ void trainOnExample(Tensor<float> *example, int groundTruth);
 int main()
 {
     layers[0].reset(new InputLayer({2}));
-    layers[1].reset(new FullyConnectedLayer(2, 10, std::make_unique<Sigmoid>()));
-    layers[1]->setSGD(0.001, 0, 4, 4);
+    layers[1].reset(new FullyConnectedLayer(2, 100, std::make_unique<Tanh>()));
+    layers[1]->setSGD(0.001, 0.001, 4, 4, 0.9);
     layers[1]->initializeWeightsNormalDistr();
-    layers[2].reset(new FullyConnectedLayer(10, 2, std::make_unique<Sigmoid>()));
-    layers[2]->setSGD(0.001, 0, 4, 4);
+    layers[2].reset(new FullyConnectedLayer(100, 2, std::make_unique<Tanh>()));
+    layers[2]->setSGD(0.001, 0.001, 4, 4, 0.9);
     layers[2]->initializeWeightsNormalDistr();
     layers[3].reset(new SoftmaxLayer(2));
 
@@ -30,12 +30,21 @@ int main()
     Tensor<float> example3({2});
     example3[0] = 1; example3[1] = 1;
 
-    for (int epoch = 0; epoch < 100000; epoch++)
+    SoftmaxLayer *softmax = dynamic_cast<SoftmaxLayer*>(layers[layers.size() - 1].get());
+
+    for (int epoch = 0; epoch < 1000000; epoch++)
     {
+        double loss = 0;
         trainOnExample(&example0, 0);
+        loss += softmax->getLoss();
         trainOnExample(&example1, 1);
+        loss += softmax->getLoss();
         trainOnExample(&example2, 1);
+        loss += softmax->getLoss();
         trainOnExample(&example3, 0);
+        loss += softmax->getLoss();
+
+        std::cout << loss/4 << std::endl;
     }
 
     return 0;
@@ -61,6 +70,4 @@ void trainOnExample(Tensor<float> *example, int groundTruth)
     {
         layers[i]->updateParameters();
     }
-
-    std::cout << softmax->getLoss() << std::endl;
 }

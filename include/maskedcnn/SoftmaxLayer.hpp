@@ -12,13 +12,13 @@ public:
     virtual void backwardPropagate(const Tensor<float> &input, Tensor<float>& prevDelta) override;
     virtual std::vector<int> getOutputDimensions() override;
 
-    double getLoss() const;
+    float getLoss() const;
     void setGroundTruth(int i);
 
     int groundTruth;
     int numClasses;
 
-    double loss;
+    float loss;
 };
 
 }

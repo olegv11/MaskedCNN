@@ -24,7 +24,7 @@ void FullyConnectedLayer::forwardPropagate(const Tensor<float> &input)
     flatInput.flatten();
     assert(flatInput.elementCount() == weights.rowLength());
 
-    cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.columnLength(), weights.rowLength(), 1.0, // z = w*prev_input + b
+    cblas_sgemv(CblasRowMajor, CblasNoTrans, weights.columnLength(), weights.rowLength(), 1.0, // z = w*flat_input + b
                 weights.dataAddress(), weights.rowLength(), flatInput.dataAddress(), 1, 0.0, z.dataAddress(), 1);
 
     for (int neuron = 0; neuron < neurons; neuron++)
@@ -60,8 +60,6 @@ void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<f
     flatDelta.flatten();
 
     assert(flatDelta.elementCount() == weights.rowLength());
-
-    flatDelta.zero();
 
     cblas_sgemv(CblasRowMajor, CblasTrans, weights.columnLength(), weights.rowLength(), 1.0,
                 weights.dataAddress(), weights.rowLength(), delta.dataAddress(), 1, 0.0, flatDelta.dataAddress(), 1); // setting previous de/dy

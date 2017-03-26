@@ -39,7 +39,7 @@ std::vector<int> SoftmaxLayer::getOutputDimensions()
     return {1};
 }
 
-double SoftmaxLayer::getLoss() const
+float SoftmaxLayer::getLoss() const
 {
     return loss;
 }

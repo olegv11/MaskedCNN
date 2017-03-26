@@ -22,7 +22,7 @@ public:
     void initializeWeightsNormalDistr();
 
     void setTrainer(std::unique_ptr<TrainingRegime> trainer);
-    void setSGD(float learningRate, float l2Reg, int numBatch, int numData);
+    void setSGD(float learningRate, float l2Reg, int numBatch, int numData, float momentum);
 
     void updateParameters();
 
