@@ -19,7 +19,8 @@ public:
     const Tensor<float> *getOutput();
     Tensor<float> *getDelta();
 
-    void initializeWeightsNormalDistr();
+    void initializeWeightsStandardDistr();
+    void initializeWeightsNormalDistrCorrectedVar();
 
     void setTrainer(std::unique_ptr<TrainingRegime> trainer);
     void setSGD(float learningRate, float l2Reg, int numBatch, int numData, float momentum);

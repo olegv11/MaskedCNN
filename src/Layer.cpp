@@ -1,5 +1,6 @@
 #include "Layer.hpp"
 #include <random>
+#include <cmath>
 
 namespace MaskedCNN
 {
@@ -49,9 +50,22 @@ Tensor<float>* Layer::getDelta()
     return &delta;
 }
 
-void Layer::initializeWeightsNormalDistr()
+void Layer::initializeWeightsStandardDistr()
 {
     std::normal_distribution<double> d(0.0, 1.0);
+
+    int weightCount = weights.elementCount();
+    float *w = weights.dataAddress();
+    for (int i = 0; i < weightCount; i++)
+    {
+        w[i] = d(gen);
+        std::cout << "W " << w[i] << std::endl;
+    }
+}
+
+void Layer::initializeWeightsNormalDistrCorrectedVar()
+{
+    std::normal_distribution<double> d(0.0, 1.0/std::sqrt(weights.elementCount()));
 
     int weightCount = weights.elementCount();
     float *w = weights.dataAddress();

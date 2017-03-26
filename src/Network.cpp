@@ -12,10 +12,10 @@ int main()
     layers[0].reset(new InputLayer({2}));
     layers[1].reset(new FullyConnectedLayer(2, 100, std::make_unique<Tanh>()));
     layers[1]->setSGD(0.001, 0.001, 4, 4, 0.9);
-    layers[1]->initializeWeightsNormalDistr();
+    layers[1]->initializeWeightsNormalDistrCorrectedVar();
     layers[2].reset(new FullyConnectedLayer(100, 2, std::make_unique<Tanh>()));
     layers[2]->setSGD(0.001, 0.001, 4, 4, 0.9);
-    layers[2]->initializeWeightsNormalDistr();
+    layers[2]->initializeWeightsNormalDistrCorrectedVar();
     layers[3].reset(new SoftmaxLayer(2));
 
     Tensor<float> example0({2});
