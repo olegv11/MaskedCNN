@@ -55,7 +55,7 @@ void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
                     }
                 }
 
-                z(d, ay, ax) = sum;
+                z(d, ay, ax) = sum + biases[d];
             }
         }
     }
