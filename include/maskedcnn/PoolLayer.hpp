@@ -9,12 +9,12 @@ namespace MaskedCNN
 class PoolLayer : public Layer
 {
 public:
-    PoolLayer(int channels, int inputWidth, int inputHeight, int windowWidth, int windowHeight);
+    PoolLayer(std::vector<int> dims, int windowWidth, int windowHeight);
 
 private:
     int channels;
-    int inputWidth;
     int inputHeight;
+    int inputWidth;
     int windowWidth;
     int windowHeight;
 

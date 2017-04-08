@@ -68,7 +68,7 @@ void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<f
 
 std::vector<int> FullyConnectedLayer::getOutputDimensions()
 {
-    return { neurons };
+    return { 1, 1, neurons };
 }
 
 

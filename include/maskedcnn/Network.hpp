@@ -7,6 +7,8 @@
 #include "SoftmaxLayer.hpp"
 #include "Activation.hpp"
 #include "TrainingRegime.hpp"
+#include "DataLoader.hpp"
+
 
 #include <vector>
 
@@ -23,3 +25,6 @@ private:
 };
 
 }
+
+void createNetwork(int miniBatchSize, int exampleCount);
+void train(MaskedCNN::CIFARDataLoader &loader, int miniBatchSize);

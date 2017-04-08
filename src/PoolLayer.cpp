@@ -2,8 +2,8 @@
 #include <limits>
 namespace MaskedCNN {
 
-PoolLayer::PoolLayer(int channels, int inputWidth, int inputHeight, int windowWidth, int windowHeight)
-    :channels(channels), inputWidth(inputWidth), inputHeight(inputHeight),
+PoolLayer::PoolLayer(std::vector<int> dims, int windowWidth, int windowHeight)
+    :channels(dims[0]), inputHeight(dims[1]), inputWidth(dims[2]),
       windowWidth(windowWidth), windowHeight(windowHeight)
 {
     output.resize({channels, inputHeight / windowHeight,inputWidth / windowWidth});

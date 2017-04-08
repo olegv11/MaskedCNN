@@ -1,73 +1,108 @@
 #include "Network.hpp"
 #include <iostream>
 #include <memory>
+#include <algorithm>
+#include <random>
+#include <iomanip>
 
 using namespace MaskedCNN;
 
-std::vector<std::unique_ptr<Layer>> layers(4);
-void trainOnExample(Tensor<float> *example, int groundTruth);
+std::vector<std::unique_ptr<Layer>> layers(10);
+
+
 
 int main()
 {
-    layers[0].reset(new InputLayer({2}));
-    layers[1].reset(new FullyConnectedLayer(2, 1000, std::make_unique<ReLu>()));
-    layers[1]->setRMSProp(0.0001, 0.01, 4, 4, 0.9);
-    layers[1]->initializeWeightsNormalDistrCorrectedVar();
-    layers[2].reset(new FullyConnectedLayer(1000, 2, std::make_unique<ReLu>()));
-    layers[2]->setRMSProp(0.0001, 0.01, 4, 4, 0.9);
-    layers[2]->initializeWeightsNormalDistrCorrectedVar();
-    layers[3].reset(new SoftmaxLayer(2));
+    CIFARDataLoader loader("/home/oleg/Deep_learning/CIFAR-100/");
+    loader.loadSmallData();
 
-    Tensor<float> example0({2});
-    example0[0] = 0; example0[1] = 0;
-
-    Tensor<float> example1({2});
-    example1[0] = 0; example1[1] = 1;
-
-    Tensor<float> example2({2});
-    example2[0] = 1; example2[1] = 0;
-
-    Tensor<float> example3({2});
-    example3[0] = 1; example3[1] = 1;
-
-    SoftmaxLayer *softmax = dynamic_cast<SoftmaxLayer*>(layers[layers.size() - 1].get());
-
-    for (int epoch = 0; epoch < 100000; epoch++)
-    {
-        double loss = 0;
-        trainOnExample(&example0, 0);
-        loss += softmax->getLoss();
-        trainOnExample(&example1, 1);
-        loss += softmax->getLoss();
-        trainOnExample(&example2, 1);
-        loss += softmax->getLoss();
-        trainOnExample(&example3, 0);
-        loss += softmax->getLoss();
-
-        std::cout << loss/4 << std::endl;
-    }
+    createNetwork(50, loader.trainCount());
+    train(loader, 50);
 
     return 0;
 }
 
-void trainOnExample(Tensor<float> *example, int groundTruth)
+void createNetwork(int miniBatchSize, int exampleCount)
+{
+    layers[0].reset(new InputLayer({3,32,32}));
+
+    layers[1].reset(new ConvolutionalLayer(layers[0]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 16));
+    layers[1]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[1]->initializeWeightsNormalDistrCorrectedVar();
+
+    layers[2].reset(new PoolLayer(layers[1]->getOutputDimensions(), 2, 2));
+
+    layers[3].reset(new ConvolutionalLayer(layers[2]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 32));
+    layers[3]->setSGD(0.0001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[3]->initializeWeightsNormalDistrCorrectedVar();
+
+    layers[4].reset(new ConvolutionalLayer(layers[3]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 64));
+    layers[4]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[4]->initializeWeightsNormalDistrCorrectedVar();
+
+    layers[5].reset(new ConvolutionalLayer(layers[4]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 128));
+    layers[5]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[5]->initializeWeightsNormalDistrCorrectedVar();
+
+    layers[6].reset(new PoolLayer(layers[5]->getOutputDimensions(), 2, 2));
+
+    auto x = layers[6]->getOutputDimensions();
+    layers[7].reset(new FullyConnectedLayer(x[0]*x[1]*x[2], 1024, std::make_unique<ReLu>()));
+    layers[7]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[7]->initializeWeightsNormalDistrCorrectedVar();
+
+
+    auto y = layers[7]->getOutputDimensions();
+    layers[8].reset(new FullyConnectedLayer(y[0]*y[1]*y[2], 2, std::make_unique<ReLu>()));
+    layers[8]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[8]->initializeWeightsNormalDistrCorrectedVar();
+
+    layers[9].reset(new SoftmaxLayer(2));
+}
+
+void train(CIFARDataLoader& loader, int miniBatchSize)
 {
     SoftmaxLayer *softmax = dynamic_cast<SoftmaxLayer*>(layers[layers.size() - 1].get());
-    softmax->setGroundTruth(groundTruth);
-    const Tensor<float> *data = example;
-    for (uint32_t i = 0; i < layers.size(); i++)
+    auto& trainData = loader.getTrainImages();
+    auto& trainLabels = loader.getTrainLabels();
+
+    std::vector<int> indices(trainData.size());
+    std::iota(indices.begin(), indices.end(), 0);
+
+    for (int epoch = 0; epoch < 10000; epoch++)
     {
-        layers[i]->forwardPropagate(*data);
-        data = layers[i]->getOutput();
+        for (unsigned int i = 0; i < trainData.size() / miniBatchSize; i++)
+        {
+            double sum = 0;
+            std::random_shuffle(indices.begin(), indices.end());
+
+            for (int j = 0; j < miniBatchSize; j++)
+            {
+                int index = indices[i * miniBatchSize + j];
+                softmax->setGroundTruth(trainLabels[index]);
+                const Tensor<float> *data = &trainData[index];
+
+                for (uint32_t i = 0; i < layers.size(); i++)
+                {
+                    layers[i]->forwardPropagate(*data);
+                    data = layers[i]->getOutput();
+                }
+
+                for (uint32_t i = layers.size() - 1; i > 0; i--)
+                {
+                    layers[i]->backwardPropagate(*layers[i-1]->getOutput(), *layers[i-1]->getDelta());
+                }
+
+                for (uint32_t i = 0; i < layers.size(); i++)
+                {
+                    layers[i]->updateParameters();
+                }
+                sum += softmax->getLoss();
+            }
+            sum /= miniBatchSize;
+            std::cout << std::setprecision(10) << sum << std::endl;
+        }
+        std::cout << "EPOCH DONE" << std::endl;
     }
 
-    for (uint32_t i = layers.size() - 1; i > 0; i--)
-    {
-        layers[i]->backwardPropagate(*layers[i-1]->getOutput(), *layers[i-1]->getDelta());
-    }
-
-    for (uint32_t i = 0; i < layers.size(); i++)
-    {
-        layers[i]->updateParameters();
-    }
 }
