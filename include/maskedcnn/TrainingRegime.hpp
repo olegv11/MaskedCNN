@@ -154,7 +154,7 @@ public:
         for (int i = 0; i < numb; i++)
         {
             float step = partialdb[i] / numBatch;
-            runningAverageW[i] = (1-gamma) * runningAverageB[i] + gamma * step * step;
+            runningAverageB[i] = (1-gamma) * runningAverageB[i] + gamma * step * step;
 
             b[i] -= learningRate / (sqrt(runningAverageB[i] + 1e-8)) * step;
         }
