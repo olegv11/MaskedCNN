@@ -86,21 +86,18 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
                 {
                     for (int fx = 0; fx < filterSize; fx++)
                     {
-                        int oy = y + fy;
-                        int ox = x + fx;
-
                         int rfy = filterSize - fy - 1;
                         int rfx = filterSize - fx - 1;
 
                         for (int fd = 0; fd < input.dimensionCount(); fd++)
                         {
-                            float prevD = weights(d,rfy,rfx,fd) * de_dy * dy_dz(fd, fy, fx);
-                            prevDelta(fd, oy, ox) += prevD;
-                            weight_delta(d,fy,fx,fd) += prevD * output(fd, rfy, rfx);
-                            bias_delta[d] += prevD;
+                            prevDelta(fd, y + fy, x + fx) += de_dy * weights(d,rfy,rfx,fd) * dy_dz(fd, fy, fx);
+                            weight_delta(d,fy,fx,fd) += de_dy * input(fd, y + rfy, x + rfx);
                         }
                     }
                 }
+
+                bias_delta[d] += de_dy;
             }
         }
     }
