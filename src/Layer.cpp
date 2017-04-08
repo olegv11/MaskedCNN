@@ -31,6 +31,14 @@ void Layer::setSGD(float learningRate, float l2Reg, int numBatch, int numData, f
                 numBatch, numData, momentum);
 }
 
+void Layer::setAdaGrad(float learningRate, float l2Reg, int numBatch, int numData)
+{
+    this->trainer = std::make_unique<AdaGrad>(
+                learningRate, l2Reg, weights.elementCount(), biases.elementCount(),
+                numBatch, numData);
+
+}
+
 void Layer::setRMSProp(float learningRate, float l2Reg, int numBatch, int numData, float decay)
 {
     this->trainer = std::make_unique<RmsProp>(

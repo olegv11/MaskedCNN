@@ -25,6 +25,7 @@ public:
     void setTrainer(std::unique_ptr<TrainingRegime> trainer);
     void setSGD(float learningRate, float l2Reg, int numBatch, int numData, float momentum);
     void setRMSProp(float learningRate, float l2Reg, int numBatch, int numData, float decay);
+    void setAdaGrad(float learningRate, float l2Reg, int numBatch, int numData);
 
     void updateParameters();
 
