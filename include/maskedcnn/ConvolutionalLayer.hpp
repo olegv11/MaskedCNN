@@ -7,7 +7,7 @@ namespace MaskedCNN {
 class ConvolutionalLayer : public Layer
 {
 public:
-    ConvolutionalLayer(int width, int height, int inputChannels, std::unique_ptr<Activation> activation, int stride,
+    ConvolutionalLayer(std::vector<int> dims, std::unique_ptr<Activation> activation, int stride,
                        int filterSize, int featureMaps);
 
     virtual void forwardPropagate(const Tensor<float>& input) override;

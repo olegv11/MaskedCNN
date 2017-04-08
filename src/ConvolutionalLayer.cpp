@@ -3,11 +3,15 @@
 
 namespace MaskedCNN {
 
-ConvolutionalLayer::ConvolutionalLayer(int width, int height, int inputChannels, std::unique_ptr<Activation> activation, int stride,
+ConvolutionalLayer::ConvolutionalLayer(std::vector<int> dims, std::unique_ptr<Activation> activation, int stride,
                                        int filterSize, int featureMaps)
     :Layer(), activation(std::move(activation)),
       stride(stride), filterSize(filterSize), outputChannels(featureMaps)
 {
+    assert(dims.size() == 3);
+    int inputChannels = dims[0];
+    int height = dims[1];
+    int width = dims[2];
     outputSizeX = std::floor((width /* + pad * 2 */ - filterSize) / (double)stride + 1);
     outputSizeY = std::floor((height /* + pad * 2 */ - filterSize) / (double)stride + 1);
 
@@ -51,10 +55,12 @@ void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
                     }
                 }
 
-                output(d, ay, ax) = sum;
+                z(d, ay, ax) = sum;
             }
         }
     }
+
+    activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
 }
 
 
@@ -64,7 +70,6 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
     weight_delta.zero();
     bias_delta.zero();
 
-    activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
 
     for (int d = 0; d < output.dimensionCount(); d++)
     {
@@ -89,13 +94,13 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
 
                         for (int fd = 0; fd < input.dimensionCount(); fd++)
                         {
-                            weight_delta(d,rfy,rfx,fd) += de_dy * dy_dz(fd, oy, ox);
-                            prevDelta(fd, oy, ox) += de_dy * weights(d,rfy,rfx,fd);
+                            float prevD = weights(d,rfy,rfx,fd) * de_dy * dy_dz(fd, fy, fx);
+                            prevDelta(fd, oy, ox) += prevD;
+                            weight_delta(d,fy,fx,fd) += prevD * output(fd, rfy, rfx);
+                            bias_delta[d] += prevD;
                         }
                     }
                 }
-
-                bias_delta[d] += de_dy;
             }
         }
     }
