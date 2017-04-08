@@ -66,6 +66,9 @@ public:
     Tensor<T> pad(int horizontalPad, int verticalPad, T padValue) const;
     Tensor<T> unpad(int horizontalPad, int verticalPad) const;
 
+    double mean();
+    T max();
+
 
 private:
     std::vector<int> dims;
@@ -383,6 +386,37 @@ Tensor<T> Tensor<T>::unpad(int horizontalPad, int verticalPad) const
     }
 
     return unpadded;
+}
+
+
+template<typename T>
+double Tensor<T>::mean()
+{
+    int els = elementCount();
+    double result = 0;
+    for (int i = 0; i < els ; i++)
+    {
+        result += (data[i] - result) / (i + 1);
+    }
+
+    return result;
+}
+
+template<typename T>
+T Tensor<T>::max()
+{
+    int els = elementCount();
+    T result = data[0];
+
+    for (int i = 1; i < els; i++)
+    {
+        if (data[i] > result)
+        {
+            result = data[i];
+        }
+    }
+
+    return result;
 }
 
 }
