@@ -6,7 +6,8 @@ namespace MaskedCNN {
 // Bias: [Neuron Count]
 
 FullyConnectedLayer::FullyConnectedLayer(int inputCount, int neurons, std::unique_ptr<Activation> activation)
-    :Layer(Tensor<float>({neurons, inputCount}), Tensor<float>({neurons})), activation(std::move(activation)), neurons(neurons)
+    :Layer(Tensor<float>({neurons, inputCount}), Tensor<float>({neurons})), activation(std::move(activation)), neurons(neurons),
+      inputCount(inputCount)
 {
     z.resize({ neurons });
     dy_dz.resize({ neurons });
@@ -56,19 +57,21 @@ void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<f
         }
     }
 
-    Tensor<float> flatDelta(prevDelta, shallow_copy{});
-    flatDelta.flatten();
-
-    assert(flatDelta.elementCount() == weights.rowLength());
+    assert(prevDelta.elementCount() == weights.rowLength());
 
     cblas_sgemv(CblasRowMajor, CblasTrans, weights.columnLength(), weights.rowLength(), 1.0,
-                weights.dataAddress(), weights.rowLength(), delta.dataAddress(), 1, 0.0, flatDelta.dataAddress(), 1); // setting previous de/dy
+                weights.dataAddress(), weights.rowLength(), delta.dataAddress(), 1, 0.0, prevDelta.dataAddress(), 1); // setting previous de/dy
 
 }
 
 std::vector<int> FullyConnectedLayer::getOutputDimensions()
 {
     return { 1, 1, neurons };
+}
+
+int FullyConnectedLayer::getNeuronInputNumber() const
+{
+    return inputCount;
 }
 
 

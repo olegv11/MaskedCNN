@@ -82,7 +82,7 @@ void Layer::initializeWeightsStandardDistr()
 //Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification
 void Layer::initializeWeightsNormalDistrCorrectedVar()
 {
-    std::normal_distribution<double> d(0.0, std::sqrt(2.0 / weights.elementCount()));
+    std::normal_distribution<double> d(0.0, std::sqrt(2.0 / getNeuronInputNumber()));
 
     int weightCount = weights.elementCount();
     float *w = weights.dataAddress();

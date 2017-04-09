@@ -16,45 +16,48 @@ int main()
     CIFARDataLoader loader("/home/oleg/Deep_learning/CIFAR-100/");
     loader.loadSmallData();
 
-    createNetwork(50, loader.trainCount());
-    train(loader, 50);
+    createNetwork(25, loader.trainCount());
+    train(loader, 25);
 
     return 0;
 }
 
 void createNetwork(int miniBatchSize, int exampleCount)
 {
+    float step = 0.0001;
+    float l2 = 0.001;
+
     layers[0].reset(new InputLayer({3,32,32}));
 
     layers[1].reset(new ConvolutionalLayer(layers[0]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 16));
-    layers[1]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[1]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[1]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[2].reset(new PoolLayer(layers[1]->getOutputDimensions(), 2, 2));
 
     layers[3].reset(new ConvolutionalLayer(layers[2]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 32));
-    layers[3]->setSGD(0.0001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[3]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[3]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[4].reset(new ConvolutionalLayer(layers[3]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 64));
-    layers[4]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[4]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[4]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[5].reset(new ConvolutionalLayer(layers[4]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 128));
-    layers[5]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[5]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[5]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[6].reset(new PoolLayer(layers[5]->getOutputDimensions(), 2, 2));
 
     auto x = layers[6]->getOutputDimensions();
     layers[7].reset(new FullyConnectedLayer(x[0]*x[1]*x[2], 1024, std::make_unique<ReLu>()));
-    layers[7]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[7]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[7]->initializeWeightsNormalDistrCorrectedVar();
 
 
     auto y = layers[7]->getOutputDimensions();
     layers[8].reset(new FullyConnectedLayer(y[0]*y[1]*y[2], 2, std::make_unique<ReLu>()));
-    layers[8]->setSGD(0.00001, 0.01, miniBatchSize, exampleCount, 0.9);
+    layers[8]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[8]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[9].reset(new SoftmaxLayer(2));
@@ -65,6 +68,8 @@ void train(CIFARDataLoader& loader, int miniBatchSize)
     SoftmaxLayer *softmax = dynamic_cast<SoftmaxLayer*>(layers[layers.size() - 1].get());
     auto& trainData = loader.getTrainImages();
     auto& trainLabels = loader.getTrainLabels();
+
+    normalize(trainData);
 
     std::vector<int> indices(trainData.size());
     std::iota(indices.begin(), indices.end(), 0);
@@ -102,7 +107,7 @@ void train(CIFARDataLoader& loader, int miniBatchSize)
             sum /= miniBatchSize;
             std::cout << std::setprecision(10) << sum << std::endl;
         }
-        std::cout << "EPOCH DONE" << std::endl;
+        std::cout << "EPOCH " << epoch << " DONE" << std::endl;
     }
 
 }

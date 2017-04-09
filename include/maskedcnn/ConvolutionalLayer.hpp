@@ -13,13 +13,16 @@ public:
     virtual void forwardPropagate(const Tensor<float>& input) override;
     virtual void backwardPropagate(const Tensor<float> &input, Tensor<float>& prevDelta) override;
     virtual std::vector<int> getOutputDimensions() override;
+    virtual int getNeuronInputNumber() const override;
 
 private:
     std::unique_ptr<Activation> activation;
     //int pad;
     int stride;
     int filterSize;
-    int outputSizeX, outputSizeY, outputChannels;
+    int filterDepth;
+    int outputWidth, outputHeight, outputChannels;
+    int inputWidth, inputHeight;
 
 };
 

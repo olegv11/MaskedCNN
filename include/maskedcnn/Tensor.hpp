@@ -3,6 +3,7 @@
 #include <functional>
 #include <numeric>
 #include <cstring>
+#include <cmath>
 #include "Util.hpp"
 #include <iostream>
 namespace MaskedCNN
@@ -68,6 +69,8 @@ public:
 
     double mean();
     T max();
+    void add(T value);
+    void mul(T value);
 
 
 private:
@@ -204,8 +207,8 @@ template<typename T>
 T& Tensor<T>::operator()(int row, int column)
 {
     assert(dimensionCount() == 2);
-    assert(column < this->dims[1]);
-    assert(row < this->dims[0]);
+    assert(column < this->dims[1] && column >= 0);
+    assert(row < this->dims[0] && row >= 0);
     return data[row * dims[1] + column];
 }
 
@@ -213,8 +216,8 @@ template<typename T>
 const T& Tensor<T>::operator()(int row, int column) const
 {
     assert(dimensionCount() == 2);
-    assert(column < this->dims[1]);
-    assert(row < this->dims[0]);
+    assert(column < this->dims[1] && column >= 0);
+    assert(row < this->dims[0] && row >= 0);
     return data[row * dims[1] + column];
 }
 
@@ -222,9 +225,9 @@ template<typename T>
 T& Tensor<T>::operator()(int channel, int row, int column)
 {
     assert(dimensionCount() == 3);
-    assert(column < this->dims[2]);
-    assert(row < this->dims[1]);
-    assert(channel < this->dims[0]);
+    assert(column < this->dims[2] && column >= 0);
+    assert(row < this->dims[1] && row >= 0);
+    assert(channel < this->dims[0] && channel >= 0);
     return data[channel * dims[2] * dims[1] + row * dims[2] + column];
 }
 
@@ -232,9 +235,9 @@ template<typename T>
 const T& Tensor<T>::operator()(int channel, int row, int column) const
 {
    assert(dimensionCount() == 3);
-   assert(row < this->dims[2]);
-   assert(column < this->dims[1]);
-   assert(channel < this->dims[0]);
+   assert(row < this->dims[2] && row >= 0);
+   assert(column < this->dims[1] && column >= 0);
+   assert(channel < this->dims[0] && channel >= 0);
    return data[(channel * dims[1] + column) * dims[2] + row];
 }
 
@@ -242,10 +245,10 @@ template<typename T>
 T& Tensor<T>::operator()(int channel2, int channel, int row, int column)
 {
     assert(dimensionCount() == 4);
-    assert(column < this->dims[3]);
-    assert(row < this->dims[2]);
-    assert(channel < this->dims[1]);
-    assert(channel2 < this->dims[0]);
+    assert(column < this->dims[3] && column >= 0);
+    assert(row < this->dims[2] && row >= 0);
+    assert(channel < this->dims[1] && channel >= 0);
+    assert(channel2 < this->dims[0] && channel2 >= 0);
     return data[((channel2 * dims[1] + channel) * dims[2] + row) * dims[3] + column];
 }
 
@@ -253,10 +256,10 @@ template<typename T>
 const T& Tensor<T>::operator()(int channel2, int channel, int row, int column) const
 {
     assert(dimensionCount() == 4);
-    assert(column < this->dims[3]);
-    assert(row < this->dims[2]);
-    assert(channel < this->dims[1]);
-    assert(channel2 < this->dims[0]);
+    assert(column < this->dims[3] && column >= 0);
+    assert(row < this->dims[2] && row >= 0);
+    assert(channel < this->dims[1] && channel >= 0);
+    assert(channel2 < this->dims[0] && channel2 >= 0);
     return data[((channel2 * dims[1] + channel) * dims[2] + row) * dims[3] + column];
 }
 
@@ -406,17 +409,55 @@ template<typename T>
 T Tensor<T>::max()
 {
     int els = elementCount();
-    T result = data[0];
+    T result = std::abs(data[0]);
 
     for (int i = 1; i < els; i++)
     {
-        if (data[i] > result)
+        if (std::abs(data[i]) > result)
         {
-            result = data[i];
+            result = std::abs(data[i]);
         }
     }
 
     return result;
+}
+
+template<typename T>
+void Tensor<T>::add(T value)
+{
+    int els = elementCount();
+    for (int i = 0; i < els; i++)
+    {
+        data[i] += value;
+    }
+}
+
+template<typename T>
+void Tensor<T>::mul(T value)
+{
+    int els = elementCount();
+    for (int i = 0; i < els; i++)
+    {
+        data[i] *= value;
+    }
+}
+
+
+template <typename T>
+inline void normalize(std::vector<Tensor<T>> examples)
+{
+    double mean = 0;
+    for (size_t example = 0; example < examples.size(); example++)
+    {
+        mean += examples[example].mean();
+    }
+
+    mean /= examples.size();
+
+    for (size_t example = 0; example < examples.size(); example++)
+    {
+        examples[example].add(-mean);
+    }
 }
 
 }

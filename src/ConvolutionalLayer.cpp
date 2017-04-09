@@ -9,44 +9,43 @@ ConvolutionalLayer::ConvolutionalLayer(std::vector<int> dims, std::unique_ptr<Ac
       stride(stride), filterSize(filterSize), outputChannels(featureMaps)
 {
     assert(dims.size() == 3);
-    int inputChannels = dims[0];
-    int height = dims[1];
-    int width = dims[2];
-    outputSizeX = std::floor((width /* + pad * 2 */ - filterSize) / (double)stride + 1);
-    outputSizeY = std::floor((height /* + pad * 2 */ - filterSize) / (double)stride + 1);
+    filterDepth = dims[0];
+    inputHeight = dims[1];
+    inputWidth = dims[2];
+    outputWidth = std::floor((inputWidth /* + pad * 2 */ - filterSize) / (double)stride + 1);
+    outputHeight = std::floor((inputHeight /* + pad * 2 */ - filterSize) / (double)stride + 1);
 
-    weights.resize({outputChannels, filterSize, filterSize, inputChannels});
-    weight_delta.resize({outputChannels, filterSize, filterSize, inputChannels});
+    weights.resize({outputChannels, filterSize, filterSize, filterDepth});
+    weight_delta.resize({outputChannels, filterSize, filterSize, filterDepth});
 
     biases.resize({outputChannels});
     bias_delta.resize({outputChannels});
 
-    z.resize({outputChannels, outputSizeY, outputSizeX});
-    dy_dz.resize({outputChannels, outputSizeY, outputSizeX});
-    delta.resize({outputChannels, outputSizeY, outputSizeX});
-    output.resize({outputChannels, outputSizeY, outputSizeX});
+    z.resize({outputChannels, outputHeight, outputWidth});
+    dy_dz.resize({outputChannels, outputHeight, outputWidth});
+    delta.resize({outputChannels, outputHeight, outputWidth});
+    output.resize({outputChannels, outputHeight, outputWidth});
 }
 
 
 void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
 {
-    for (int d = 0; d < output.dimensionCount(); d++)
-    {
-        for (int ay = 0; ay < output.columnLength(); ay++)
-        {
-            for (int ax = 0; ax < output.rowLength(); ax++)
-            {
-                int y = ay * stride;
-                int x = ax * stride;
+    z.zero();
 
-                double sum = 0;
+    for (int d = 0; d < outputChannels; d++)
+    {
+        for (int ay = 0, y = 0; ay < outputHeight; ay++, y += stride)
+        {
+            for (int ax = 0, x = 0; ax < outputWidth; ax++, x += stride)
+            {
+                float sum = 0;
 
                 for (int fy = 0; fy < filterSize; fy++)
                 {
                     for (int fx = 0; fx < filterSize; fx++)
                     {
-                        int oy = y + fy;
-                        int ox = x + fx;
+                        int oy = y + (filterSize - fy - 1);
+                        int ox = x + (filterSize - fx - 1);
 
                         for (int fd = 0; fd < input.dimensionCount(); fd++)
                         {
@@ -55,7 +54,7 @@ void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
                     }
                 }
 
-                z(d, ay, ax) = sum + biases[d];
+                z(d, ay, ax) += sum + biases[d];
             }
         }
     }
@@ -70,42 +69,77 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
     weight_delta.zero();
     bias_delta.zero();
 
+    elementwiseMultiplication(delta.dataAddress(), dy_dz.dataAddress(),
+                              delta.dataAddress(), delta.elementCount());
 
-    for (int d = 0; d < output.dimensionCount(); d++)
+    // TODO: strides
+
+    for (int d = 0; d < outputChannels; d++)
     {
-        for (int ay = 0; ay < output.columnLength(); ay++)
+        for (int fy = 0; fy < filterSize; fy++)
         {
-            for (int ax = 0; ax < output.rowLength(); ax++)
+            for (int ay = 0; ay < outputHeight; ay++)
             {
-                int y = ay * stride;
-                int x = ax * stride;
+                int y = stride * ay + fy;
+                if (y < 0 || y >= inputHeight) continue;
 
-                float de_dy = delta(d,ay,ax);
+                for (int fx = 0; fx < filterSize; fx++)
+                {
+                    for (int ax = 0; ax < outputWidth; ax++)
+                    {
+                        int x = stride * ax + fx;
+                        if (x < 0 || x >= inputWidth) continue;
 
+                        float del = delta(d, ay, ax);
+
+                        for (int fd = 0; fd < filterDepth; fd++)
+                        {
+                            weight_delta(d, fy, fx, fd) += del * input(fd, y, x);
+                        }
+
+                        bias_delta[d] += del;
+                    }
+                }
+            }
+        }
+    }
+
+    for (int d = 0; d < outputChannels; d++)
+    {
+        for (int ay = -filterSize + 1, y = 0; ay < outputHeight + filterSize - 1; ay++, y += 1)
+        {
+            for (int ax = -filterSize + 1, x = 0; ax < outputWidth + filterSize - 1; ax++, x += 1)
+            {
                 for (int fy = 0; fy < filterSize; fy++)
                 {
                     for (int fx = 0; fx < filterSize; fx++)
                     {
-                        int rfy = filterSize - fy - 1;
-                        int rfx = filterSize - fx - 1;
+                        int oy = ay + fy;
+                        int ox = ax + fx;
 
-                        for (int fd = 0; fd < input.dimensionCount(); fd++)
+                        if (oy >= 0 && oy < outputHeight && ox >= 0 && ox < outputWidth)
                         {
-                            prevDelta(fd, y + fy, x + fx) += de_dy * weights(d,rfy,rfx,fd) * dy_dz(fd, fy, fx);
-                            weight_delta(d,fy,fx,fd) += de_dy * input(fd, y + rfy, x + rfx);
+                            for (int fd = 0; fd < input.dimensionCount(); fd++)
+                            {
+                                prevDelta(fd, y, x) += delta(d, ay + fy, ax + fx) * weights(d, fy, fx, fd);
+                            }
                         }
                     }
                 }
-
-                bias_delta[d] += de_dy;
             }
         }
     }
+
 }
 
 std::vector<int> ConvolutionalLayer::getOutputDimensions()
 {
-    return {outputChannels, outputSizeY, outputSizeX};
+    return {outputChannels, outputHeight, outputWidth};
+}
+
+int ConvolutionalLayer::getNeuronInputNumber() const
+{
+    return filterSize * filterSize * filterDepth;
 }
 
 

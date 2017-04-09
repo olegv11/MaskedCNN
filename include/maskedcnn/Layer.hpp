@@ -15,6 +15,7 @@ public:
     virtual void forwardPropagate(const Tensor<float>& input) = 0;
     virtual void backwardPropagate(const Tensor<float> &input, Tensor<float>& prevDelta) = 0;
     virtual std::vector<int> getOutputDimensions() = 0;
+    virtual int getNeuronInputNumber() const { return 0; }
 
     const Tensor<float> *getOutput();
     Tensor<float> *getDelta();
@@ -38,6 +39,8 @@ protected:
     Tensor<float> bias_delta; // dE/db
     Tensor<float> delta; //dE/dz
     Tensor<float> dy_dz;
+
+    int miniBatchSize;
 
     std::unique_ptr<TrainingRegime> trainer;
 };
