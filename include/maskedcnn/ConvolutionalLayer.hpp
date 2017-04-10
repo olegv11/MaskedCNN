@@ -8,7 +8,7 @@ class ConvolutionalLayer : public Layer
 {
 public:
     ConvolutionalLayer(std::vector<int> dims, std::unique_ptr<Activation> activation, int stride,
-                       int filterSize, int featureMaps);
+                       int filterSize, int pad, int featureMaps);
 
     virtual void forwardPropagate(const Tensor<float>& input) override;
     virtual void backwardPropagate(const Tensor<float> &input, Tensor<float>& prevDelta) override;
@@ -17,7 +17,7 @@ public:
 
 private:
     std::unique_ptr<Activation> activation;
-    //int pad;
+    int pad;
     int stride;
     int filterSize;
     int filterDepth;

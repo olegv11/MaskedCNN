@@ -16,34 +16,35 @@ int main()
     CIFARDataLoader loader("/home/oleg/Deep_learning/CIFAR-100/");
     loader.loadSmallData();
 
-    createNetwork(25, loader.trainCount());
-    train(loader, 25);
+    createNetwork(20, loader.trainCount());
+    train(loader, 20);
 
     return 0;
 }
 
 void createNetwork(int miniBatchSize, int exampleCount)
 {
-    float step = 0.0001;
-    float l2 = 0.001;
+    float step = 0.00004;
+    //float l2 = 0.0001;
+    float l2 = 0;
 
     layers[0].reset(new InputLayer({3,32,32}));
 
-    layers[1].reset(new ConvolutionalLayer(layers[0]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 16));
+    layers[1].reset(new ConvolutionalLayer(layers[0]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 16));
     layers[1]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[1]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[2].reset(new PoolLayer(layers[1]->getOutputDimensions(), 2, 2));
 
-    layers[3].reset(new ConvolutionalLayer(layers[2]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 32));
+    layers[3].reset(new ConvolutionalLayer(layers[2]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 32));
     layers[3]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[3]->initializeWeightsNormalDistrCorrectedVar();
 
-    layers[4].reset(new ConvolutionalLayer(layers[3]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 64));
+    layers[4].reset(new ConvolutionalLayer(layers[3]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 64));
     layers[4]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[4]->initializeWeightsNormalDistrCorrectedVar();
 
-    layers[5].reset(new ConvolutionalLayer(layers[4]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 128));
+    layers[5].reset(new ConvolutionalLayer(layers[4]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 128));
     layers[5]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
     layers[5]->initializeWeightsNormalDistrCorrectedVar();
 

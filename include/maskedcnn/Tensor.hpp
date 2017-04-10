@@ -458,6 +458,21 @@ inline void normalize(std::vector<Tensor<T>> examples)
     {
         examples[example].add(-mean);
     }
+
+    double max = examples[0].max();
+    for (size_t example = 1; example < examples.size(); example++)
+    {
+        double t = examples[example].max();
+        if (t > max)
+        {
+            max = t;
+        }
+    }
+
+    for (size_t example = 0; example < examples.size(); example++)
+    {
+        examples[example].mul(1.0 / max);
+    }
 }
 
 }

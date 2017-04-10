@@ -4,16 +4,17 @@
 namespace MaskedCNN {
 
 ConvolutionalLayer::ConvolutionalLayer(std::vector<int> dims, std::unique_ptr<Activation> activation, int stride,
-                                       int filterSize, int featureMaps)
-    :Layer(), activation(std::move(activation)),
+                                       int filterSize, int pad, int featureMaps)
+    :Layer(), activation(std::move(activation)), pad(pad),
       stride(stride), filterSize(filterSize), outputChannels(featureMaps)
 {
     assert(dims.size() == 3);
     filterDepth = dims[0];
     inputHeight = dims[1];
     inputWidth = dims[2];
-    outputWidth = std::floor((inputWidth /* + pad * 2 */ - filterSize) / (double)stride + 1);
-    outputHeight = std::floor((inputHeight /* + pad * 2 */ - filterSize) / (double)stride + 1);
+
+    outputWidth = std::floor((inputWidth + pad * 2 - filterSize) / (double)stride + 1);
+    outputHeight = std::floor((inputHeight + pad * 2  - filterSize) / (double)stride + 1);
 
     weights.resize({outputChannels, filterSize, filterSize, filterDepth});
     weight_delta.resize({outputChannels, filterSize, filterSize, filterDepth});
@@ -34,9 +35,9 @@ void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
 
     for (int d = 0; d < outputChannels; d++)
     {
-        for (int ay = 0, y = 0; ay < outputHeight; ay++, y += stride)
+        for (int ay = 0, y = -pad; ay < outputHeight; ay++, y += stride)
         {
-            for (int ax = 0, x = 0; ax < outputWidth; ax++, x += stride)
+            for (int ax = 0, x = -pad; ax < outputWidth; ax++, x += stride)
             {
                 float sum = 0;
 
@@ -47,9 +48,12 @@ void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
                         int oy = y + (filterSize - fy - 1);
                         int ox = x + (filterSize - fx - 1);
 
-                        for (int fd = 0; fd < input.dimensionCount(); fd++)
+                        if (oy >= 0 && oy < inputHeight && ox >= 0 && ox < inputWidth)
                         {
-                            sum += weights(d,fy,fx,fd) * input(fd, oy, ox);
+                            for (int fd = 0; fd < input.dimensionCount(); fd++)
+                            {
+                                sum += weights(d,fy,fx,fd) * input(fd, oy, ox);
+                            }
                         }
                     }
                 }
@@ -71,8 +75,6 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
 
     elementwiseMultiplication(delta.dataAddress(), dy_dz.dataAddress(),
                               delta.dataAddress(), delta.elementCount());
-
-    // TODO: strides
 
     for (int d = 0; d < outputChannels; d++)
     {
@@ -104,32 +106,48 @@ void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<fl
         }
     }
 
+    // Doing transposed convolution here
+    // https://arxiv.org/pdf/1603.07285.pdf
+
+    // "inserting" (stride-1) virtual zeroes in the transposed input (input to transposed convolution,
+    // in this case, is our output) between each real element
+    int transposedHeight = outputHeight + (outputHeight - 1) * (stride - 1);
+    int transposedWidth = outputWidth + (outputWidth - 1) * (stride - 1);
+
+    int virtualPad = filterSize - pad - 1;
+    assert(virtualPad >= 0); // TODO: correctly compute it in cases where padding is more than full padding
+
+    // Additional padding from left and up
+    int padLeft = (inputWidth + 2 * pad - filterSize) % stride;
+    int padUp = (inputHeight + 2 * pad - filterSize) % stride;
+
+    int shiftLeft = -(virtualPad + padLeft);
+    int shiftUp = -(virtualPad + padUp);
+
     for (int d = 0; d < outputChannels; d++)
     {
-        for (int ay = -filterSize + 1, y = 0; ay < outputHeight + filterSize - 1; ay++, y += 1)
+        for (int ay = shiftUp; ay < shiftUp + transposedHeight + padUp - filterSize - 1; ay++)
         {
-            for (int ax = -filterSize + 1, x = 0; ax < outputWidth + filterSize - 1; ax++, x += 1)
+            for (int fy = 0; fy < filterSize; fy++)
             {
-                for (int fy = 0; fy < filterSize; fy++)
+                int oy = ay + fy;
+                if ((oy % stride != 0) || oy < 0 || oy >= outputHeight) continue;
+                for (int ax = shiftLeft; ax < shiftLeft + transposedWidth + padLeft - filterSize - 1; ax++)
                 {
                     for (int fx = 0; fx < filterSize; fx++)
                     {
-                        int oy = ay + fy;
                         int ox = ax + fx;
+                        if ((ox % stride != 0) || ox < 0 || ox >= outputWidth) continue;
 
-                        if (oy >= 0 && oy < outputHeight && ox >= 0 && ox < outputWidth)
+                        for (int fd = 0; fd < input.dimensionCount(); fd++)
                         {
-                            for (int fd = 0; fd < input.dimensionCount(); fd++)
-                            {
-                                prevDelta(fd, y, x) += delta(d, ay + fy, ax + fx) * weights(d, fy, fx, fd);
-                            }
+                            prevDelta(fd, oy / stride, ox / stride) += delta(d, oy, ox) * weights(d, fy, fx, fd);
                         }
                     }
                 }
             }
         }
     }
-
 }
 
 std::vector<int> ConvolutionalLayer::getOutputDimensions()

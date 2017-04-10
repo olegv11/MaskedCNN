@@ -89,7 +89,7 @@ void CIFARDataLoader::loadTrainDataSmall()
             int label;
             sStream >> filename >> label;
             if (label > 1) continue;
-            if (categoriesLoaded[label] >= 250) continue;
+            if (categoriesLoaded[label] >= 10) continue;
             categoriesLoaded[label]++;
             trainImages.push_back(loadImage(basePath + filename));
             trainLabels.push_back(label);
