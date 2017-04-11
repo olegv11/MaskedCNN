@@ -31,7 +31,7 @@ void SoftmaxLayer::backwardPropagate(const Tensor<float>&input, Tensor<float>& p
         prevDelta[i] = -(indicator - output[i]);
     }
 
-    loss = -std::log(output[groundTruth]);
+    loss = -std::log(output[groundTruth] + 1e-9);
 }
 
 std::vector<int> SoftmaxLayer::getOutputDimensions()
