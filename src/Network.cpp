@@ -16,15 +16,31 @@ int main()
     CIFARDataLoader loader("/home/oleg/Deep_learning/CIFAR-100/");
     loader.loadSmallData();
 
-    createNetwork(20, loader.trainCount());
-    train(loader, 20);
+    createNetwork(25, loader.trainCount());
+    train(loader, 25);
 
     return 0;
 }
 
+void setSGD(int miniBatchSize, int exampleCount, float step, float l2, float momentum = 0.9)
+{
+    for (size_t i = 1; i < layers.size() - 1; i++)
+    {
+        layers[i]->setSGD(step, l2, miniBatchSize, exampleCount, momentum);
+    }
+}
+
+void setRMSProp(int miniBatchSize, int exampleCount, float step, float l2, float gamma = 0.9)
+{
+    for (size_t i = 1; i < layers.size() - 1; i++)
+    {
+        layers[i]->setRMSProp(step, l2, miniBatchSize, exampleCount, gamma);
+    }
+}
+
 void createNetwork(int miniBatchSize, int exampleCount)
 {
-    float step = 0.00004;
+    float step = 0.00001;
     //float l2 = 0.0001;
     float l2 = 0;
 
@@ -77,10 +93,10 @@ void train(CIFARDataLoader& loader, int miniBatchSize)
 
     for (int epoch = 0; epoch < 10000; epoch++)
     {
+        std::random_shuffle(indices.begin(), indices.end());
         for (unsigned int i = 0; i < trainData.size() / miniBatchSize; i++)
         {
             double sum = 0;
-            std::random_shuffle(indices.begin(), indices.end());
 
             for (int j = 0; j < miniBatchSize; j++)
             {

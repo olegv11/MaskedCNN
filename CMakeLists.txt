@@ -11,14 +11,21 @@ set(GCC_FLAGS "-Wall -Wextra -pedantic -O2 -march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3 -O0")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_FLAGS}")
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
-file(GLOB sources ${CMAKE_SOURCE_DIR}/src/*.cpp)
-file(GLOB headers ${CMAKE_SOURCE_DIR}/include/maskedcnn/*.hpp)
+file(GLOB sources ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/maskedcnn/*.hpp)
 
-include_directories("${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/include/maskedcnn")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/include/maskedcnn")
 
 add_executable(maskedcnn
     ${sources} ${headers})
 target_link_libraries(maskedcnn ${OpenCV_LIBS} ${OpenBLAS})
 
+
+add_library(libmaskedcnn
+    ${sources} ${headers})
+target_link_libraries(libmaskedcnn ${OpenCV_LIBS} ${OpenBLAS})
+
+add_subdirectory(test)
 

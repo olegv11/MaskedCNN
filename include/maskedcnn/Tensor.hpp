@@ -3,6 +3,7 @@
 #include <functional>
 #include <numeric>
 #include <cstring>
+#include <string>
 #include <cmath>
 #include "Util.hpp"
 #include <iostream>
@@ -71,6 +72,8 @@ public:
     T max();
     void add(T value);
     void mul(T value);
+
+    std::string toString() const;
 
 
 private:
@@ -228,7 +231,7 @@ T& Tensor<T>::operator()(int channel, int row, int column)
     assert(column < this->dims[2] && column >= 0);
     assert(row < this->dims[1] && row >= 0);
     assert(channel < this->dims[0] && channel >= 0);
-    return data[channel * dims[2] * dims[1] + row * dims[2] + column];
+    return data[(channel * dims[1] + row) * dims[2] + column];
 }
 
 template<typename T>
@@ -238,7 +241,8 @@ const T& Tensor<T>::operator()(int channel, int row, int column) const
    assert(row < this->dims[2] && row >= 0);
    assert(column < this->dims[1] && column >= 0);
    assert(channel < this->dims[0] && channel >= 0);
-   return data[(channel * dims[1] + column) * dims[2] + row];
+
+   return data[(channel * dims[1] + row) * dims[2] + column];
 }
 
 template<typename T>
@@ -329,6 +333,7 @@ void Tensor<T>::zero()
 template<typename T>
 int Tensor<T>::elementCount() const
 {
+    if (dims.size() == 0) return 0;
     return multiplyAllElements(dims);
 }
 
@@ -442,9 +447,28 @@ void Tensor<T>::mul(T value)
     }
 }
 
+template<typename T>
+std::string Tensor<T>::toString() const
+{
+    assert(dimensionCount() <= 2);
+    std::string result;
+
+    for (int i = 0; i < dims[0]; i++)
+    {
+        for (int j = 0; j < dims[1]; j++)
+        {
+            result += std::to_string(data[j + i * dims[1]]);
+            result += " ";
+        }
+        result += "\n";
+    }
+
+    return result;
+}
+
 
 template <typename T>
-inline void normalize(std::vector<Tensor<T>> examples)
+inline void normalize(std::vector<Tensor<T>>& examples)
 {
     double mean = 0;
     for (size_t example = 0; example < examples.size(); example++)
@@ -458,6 +482,7 @@ inline void normalize(std::vector<Tensor<T>> examples)
     {
         examples[example].add(-mean);
     }
+
 
     double max = examples[0].max();
     for (size_t example = 1; example < examples.size(); example++)
@@ -473,6 +498,7 @@ inline void normalize(std::vector<Tensor<T>> examples)
     {
         examples[example].mul(1.0 / max);
     }
+
 }
 
 }
