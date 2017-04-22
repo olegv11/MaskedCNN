@@ -20,6 +20,8 @@ public:
     const Tensor<float> *getOutput();
     Tensor<float> *getDelta();
 
+    void setTrainingMode(bool isTraining);
+
     void initializeWeightsStandardDistr();
     void initializeWeightsNormalDistrCorrectedVar();
 
@@ -41,6 +43,7 @@ protected:
     Tensor<float> dy_dz;
 
     int miniBatchSize;
+    bool isTraining;
 
     std::unique_ptr<TrainingRegime> trainer;
 };

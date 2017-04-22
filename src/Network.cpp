@@ -7,7 +7,7 @@
 
 using namespace MaskedCNN;
 
-std::vector<std::unique_ptr<Layer>> layers(10);
+std::vector<std::unique_ptr<Layer>> layers(11);
 
 
 
@@ -72,12 +72,14 @@ void createNetwork(int miniBatchSize, int exampleCount)
     layers[7]->initializeWeightsNormalDistrCorrectedVar();
 
 
-    auto y = layers[7]->getOutputDimensions();
-    layers[8].reset(new FullyConnectedLayer(y[0]*y[1]*y[2], 2, std::make_unique<ReLu>()));
-    layers[8]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[8]->initializeWeightsNormalDistrCorrectedVar();
+    layers[8].reset(new DropoutLayer(layers[7]->getOutputDimensions(), 0.5));
 
-    layers[9].reset(new SoftmaxLayer(2));
+    auto y = layers[8]->getOutputDimensions();
+    layers[9].reset(new FullyConnectedLayer(y[0]*y[1]*y[2], 2, std::make_unique<ReLu>()));
+    layers[9]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
+    layers[9]->initializeWeightsNormalDistrCorrectedVar();
+
+    layers[10].reset(new SoftmaxLayer(2));
 }
 
 void train(CIFARDataLoader& loader, int miniBatchSize)
@@ -90,6 +92,11 @@ void train(CIFARDataLoader& loader, int miniBatchSize)
 
     std::vector<int> indices(trainData.size());
     std::iota(indices.begin(), indices.end(), 0);
+
+    for (unsigned int i = 0; i < layers.size(); i++)
+    {
+        layers[i]->setTrainingMode(true);
+    }
 
     for (int epoch = 0; epoch < 10000; epoch++)
     {

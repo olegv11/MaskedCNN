@@ -3,6 +3,7 @@
 #include "InputLayer.hpp"
 #include "ConvolutionalLayer.hpp"
 #include "FullyConnectedLayer.hpp"
+#include "DropoutLayer.hpp"
 #include "PoolLayer.hpp"
 #include "SoftmaxLayer.hpp"
 #include "Activation.hpp"

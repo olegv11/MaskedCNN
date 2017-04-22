@@ -66,6 +66,11 @@ Tensor<float>* Layer::getDelta()
     return &delta;
 }
 
+void Layer::setTrainingMode(bool isTraining)
+{
+    this->isTraining = isTraining;
+}
+
 void Layer::initializeWeightsStandardDistr()
 {
     std::normal_distribution<double> d(0.0, 1.0);
