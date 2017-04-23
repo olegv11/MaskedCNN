@@ -5,22 +5,39 @@ namespace MaskedCNN {
 // Weight: [Neuron Count x Input count]
 // Bias: [Neuron Count]
 
-FullyConnectedLayer::FullyConnectedLayer(int inputCount, int neurons, std::unique_ptr<Activation> activation)
-    :Layer(Tensor<float>({neurons, inputCount}), Tensor<float>({neurons})), activation(std::move(activation)), neurons(neurons),
-      inputCount(inputCount)
+FullyConnectedLayer::FullyConnectedLayer(std::unique_ptr<Activation> activation, int neurons)
+    :activation(std::move(activation)), neurons(neurons)
 {
     z.resize({ neurons });
     dy_dz.resize({ neurons });
     delta.resize({ neurons });
     output.resize({ neurons });
-
-    weight_delta.resize(weights.dimensions());
-    bias_delta.resize(biases.dimensions());
 }
 
 
 void FullyConnectedLayer::forwardPropagate(const Tensor<float> &input)
 {
+    if (isTraining)
+    {
+        if (!initDone)
+        {
+            inputCount = multiplyAllElements(input.dimensions());
+
+            weights.resize({neurons, inputCount});
+            weight_delta.resize({neurons, inputCount});
+
+            biases.resize({inputCount});
+            bias_delta.resize({inputCount});
+
+            initializeWeightsNormalDistrCorrectedVar();
+            initDone = true;
+        }
+    }
+    else
+    {
+        assert(inputCount == multiplyAllElements(input.dimensions()));
+    }
+
     Tensor<float> flatInput(const_cast<Tensor<float>&>(input), shallow_copy{});
     flatInput.flatten();
     assert(flatInput.elementCount() == weights.rowLength());
