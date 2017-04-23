@@ -44,6 +44,7 @@ protected:
 
     int miniBatchSize;
     bool isTraining;
+    bool initDone;
 
     std::unique_ptr<TrainingRegime> trainer;
 };

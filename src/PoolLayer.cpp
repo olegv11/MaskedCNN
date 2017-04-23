@@ -2,16 +2,21 @@
 #include <limits>
 namespace MaskedCNN {
 
-PoolLayer::PoolLayer(std::vector<int> dims, int windowWidth, int windowHeight)
-    :channels(dims[0]), inputHeight(dims[1]), inputWidth(dims[2]),
-      windowWidth(windowWidth), windowHeight(windowHeight)
+PoolLayer::PoolLayer(int windowWidth, int windowHeight, int channels)
+    :channels(channels), windowWidth(windowWidth), windowHeight(windowHeight)
 {
-    output.resize({channels, inputHeight / windowHeight,inputWidth / windowWidth});
-    delta.resize({channels, inputHeight / windowHeight,inputWidth / windowWidth});
 }
 
 void PoolLayer::forwardPropagate(const Tensor<float>& input)
 {
+    auto dims = input.dimensions();
+
+    assert(channels == dims[0]);
+    inputHeight = dims[1];
+    inputWidth = dims[2];
+    output.resize({channels, inputHeight / windowHeight, inputWidth / windowWidth});
+    delta.resize({channels, inputHeight / windowHeight, inputWidth / windowWidth});
+
     for (int i = 0; i < output.channelLength(); i++)
     {
         for (int j = 0; j < output.columnLength(); j++)

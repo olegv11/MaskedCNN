@@ -40,44 +40,36 @@ void setRMSProp(int miniBatchSize, int exampleCount, float step, float l2, float
 
 void createNetwork(int miniBatchSize, int exampleCount)
 {
-    float step = 0.00001;
+    float step = 0.00002;
     //float l2 = 0.0001;
     float l2 = 0;
 
     layers[0].reset(new InputLayer({3,32,32}));
 
-    layers[1].reset(new ConvolutionalLayer(layers[0]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 16));
+    layers[1].reset(new ConvolutionalLayer(std::make_unique<ReLu>(), 1, 3, 2, 3, 16));
     layers[1]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[1]->initializeWeightsNormalDistrCorrectedVar();
 
-    layers[2].reset(new PoolLayer(layers[1]->getOutputDimensions(), 2, 2));
+    layers[2].reset(new PoolLayer(2, 2, 16));
 
-    layers[3].reset(new ConvolutionalLayer(layers[2]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 32));
+    layers[3].reset(new ConvolutionalLayer(std::make_unique<ReLu>(), 1, 3, 2, 16, 32));
     layers[3]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[3]->initializeWeightsNormalDistrCorrectedVar();
 
-    layers[4].reset(new ConvolutionalLayer(layers[3]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 64));
+    layers[4].reset(new ConvolutionalLayer(std::make_unique<ReLu>(), 1, 3, 2, 32, 64));
     layers[4]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[4]->initializeWeightsNormalDistrCorrectedVar();
 
-    layers[5].reset(new ConvolutionalLayer(layers[4]->getOutputDimensions(), std::make_unique<ReLu>(), 1, 3, 2, 128));
+    layers[5].reset(new ConvolutionalLayer(std::make_unique<ReLu>(), 1, 3, 2, 64, 128));
     layers[5]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[5]->initializeWeightsNormalDistrCorrectedVar();
 
-    layers[6].reset(new PoolLayer(layers[5]->getOutputDimensions(), 2, 2));
+    layers[6].reset(new PoolLayer(2, 2, 128));
 
-    auto x = layers[6]->getOutputDimensions();
-    layers[7].reset(new FullyConnectedLayer(x[0]*x[1]*x[2], 1024, std::make_unique<ReLu>()));
+    layers[7].reset(new FullyConnectedLayer(std::make_unique<ReLu>(), 1024));
     layers[7]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[7]->initializeWeightsNormalDistrCorrectedVar();
 
 
-    layers[8].reset(new DropoutLayer(layers[7]->getOutputDimensions(), 0.5));
+    layers[8].reset(new DropoutLayer(0.5));
 
-    auto y = layers[8]->getOutputDimensions();
-    layers[9].reset(new FullyConnectedLayer(y[0]*y[1]*y[2], 2, std::make_unique<ReLu>()));
+    layers[9].reset(new FullyConnectedLayer(std::make_unique<ReLu>(), 2));
     layers[9]->setRMSProp(step, l2, miniBatchSize, exampleCount, 0.9);
-    layers[9]->initializeWeightsNormalDistrCorrectedVar();
 
     layers[10].reset(new SoftmaxLayer(2));
 }

@@ -8,19 +8,33 @@ namespace MaskedCNN
 class TrainingRegime
 {
 public:
-    TrainingRegime(float learningRate, float l2Reg, int numw, int numb, int numBatch, int numData)
-        : partialdw(numw), partialdb(numb), numw(numw), numb(numb),
-          numBatch(numBatch), numData(numData), learningRate(learningRate),
+    TrainingRegime(float learningRate, float l2Reg, int numBatch, int numData)
+        : numBatch(numBatch), numData(numData), learningRate(learningRate),
           l2Reg(l2Reg), counter(0), step(0)
     {
-        memset(partialdw.data(), 0, numw * sizeof(float));
-        memset(partialdb.data(), 0, numb * sizeof(float));
     }
 
 
-    void updateParameters(float*__restrict__ w, float*__restrict__ dw,
-                                  float*__restrict__ b, float*__restrict__ db)
+    void updateParameters(float*__restrict__ w, float*__restrict__ dw, int numw,
+                                  float*__restrict__ b, float*__restrict__ db, int numb)
     {
+        if (!initDone)
+        {
+            this->numw = numw;
+            this->numb = numb;
+            partialdw.resize(numw);
+            partialdb.resize(numb);
+            memset(partialdw.data(), 0, numw * sizeof(float));
+            memset(partialdb.data(), 0, numb * sizeof(float));
+            initEnded();
+            initDone = true;
+        }
+        else
+        {
+            assert(this->numw == numw);
+            assert(this->numb == numb);
+        }
+
         for(int i = 0; i < numw; i++)
         {
             partialdw[i] += dw[i];
@@ -42,6 +56,7 @@ public:
 
 protected:
     virtual void miniBatchEnded(float*__restrict__ w, float*__restrict__ b) = 0;
+    virtual void initEnded() {}
 
     std::vector<float> partialdw;
     std::vector<float> partialdb;
@@ -52,18 +67,16 @@ protected:
 
     int counter;
     int step;
+    bool initDone = false;
 };
 
 
 class StochasticGradientDescent : public TrainingRegime
 {
 public:
-    StochasticGradientDescent(float learningRate, float l2Reg, int numw, int numb, int numBatch, int numData, float momentum)
-        :TrainingRegime(learningRate, l2Reg, numw, numb, numBatch, numData), momentum(momentum), prevStepW(numw),
-          prevStepB(numb)
+    StochasticGradientDescent(float learningRate, float l2Reg, int numBatch, int numData, float momentum)
+        :TrainingRegime(learningRate, l2Reg, numBatch, numData), momentum(momentum)
     {
-        memset(prevStepW.data(), 0, numw * sizeof(float));
-        memset(prevStepB.data(), 0, numb * sizeof(float));
     }
 
 protected:
@@ -87,6 +100,14 @@ protected:
         memset(partialdb.data(), 0, numb * sizeof(float));
     }
 
+    virtual void initEnded()
+    {
+        prevStepW.resize(numw);
+        prevStepB.resize(numb);
+        memset(prevStepW.data(), 0, numw * sizeof(float));
+        memset(prevStepB.data(), 0, numb * sizeof(float));
+    }
+
     float momentum;
     std::vector<float> prevStepW;
     std::vector<float> prevStepB;
@@ -95,12 +116,9 @@ protected:
 class AdaGrad : public TrainingRegime
 {
 public:
-    AdaGrad(float learningRate, float l2Reg, int numw, int numb, int numBatch, int numData)
-        :TrainingRegime(learningRate, l2Reg, numw, numb, numBatch, numData), sumGradW(numw),
-          sumGradB(numb)
+    AdaGrad(float learningRate, float l2Reg, int numBatch, int numData)
+        :TrainingRegime(learningRate, l2Reg, numBatch, numData)
     {
-        memset(sumGradW.data(), 0, numw * sizeof(float));
-        memset(sumGradB.data(), 0, numb * sizeof(float));
     }
 
     virtual void miniBatchEnded(float*__restrict__ w, float*__restrict__ b) override
@@ -126,6 +144,14 @@ public:
     }
 
 protected:
+    virtual void initEnded()
+    {
+        sumGradW.resize(numw);
+        sumGradB.resize(numb);
+        memset(sumGradW.data(), 0, numw * sizeof(float));
+        memset(sumGradB.data(), 0, numb * sizeof(float));
+    }
+
     std::vector<float> sumGradW;
     std::vector<float> sumGradB;
 };
@@ -133,12 +159,9 @@ protected:
 class RmsProp : public TrainingRegime
 {
 public:
-    RmsProp(float learningRate, float l2Reg, int numw, int numb, int numBatch, int numData, float gamma)
-        :TrainingRegime(learningRate, l2Reg, numw, numb, numBatch, numData), runningAverageW(numw),
-          runningAverageB(numb), gamma(gamma)
+    RmsProp(float learningRate, float l2Reg,int numBatch, int numData, float gamma)
+        :TrainingRegime(learningRate, l2Reg, numBatch, numData), gamma(gamma)
     {
-        memset(runningAverageW.data(), 0, numw * sizeof(float));
-        memset(runningAverageB.data(), 0, numb * sizeof(float));
     }
 
     virtual void miniBatchEnded(float*__restrict__ w, float*__restrict__ b) override
@@ -165,6 +188,14 @@ public:
 
 
 protected:
+    virtual void initEnded()
+    {
+        runningAverageW.resize(numw);
+        runningAverageB.resize(numb);
+        memset(runningAverageW.data(), 0, numw * sizeof(float));
+        memset(runningAverageB.data(), 0, numb * sizeof(float));
+    }
+
     std::vector<float> runningAverageW;
     std::vector<float> runningAverageB;
     float gamma;

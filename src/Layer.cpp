@@ -9,12 +9,13 @@ static std::random_device rd;
 static std::mt19937 gen(rd());
 
 Layer::Layer()
+    :initDone(false)
 {
 }
 
 
 Layer::Layer(Tensor<float> &&weights, Tensor<float> &&biases)
-    :weights(std::move(weights)), biases(std::move(biases))
+    :weights(std::move(weights)), biases(std::move(biases)), initDone(false)
 {
 }
 
@@ -27,23 +28,20 @@ void Layer::setTrainer(std::unique_ptr<TrainingRegime> trainer)
 void Layer::setSGD(float learningRate, float l2Reg, int numBatch, int numData, float momentum)
 {
     this->trainer = std::make_unique<StochasticGradientDescent>(
-                learningRate, l2Reg, weights.elementCount(), biases.elementCount(),
-                numBatch, numData, momentum);
+                learningRate, l2Reg, numBatch, numData, momentum);
 }
 
 void Layer::setAdaGrad(float learningRate, float l2Reg, int numBatch, int numData)
 {
     this->trainer = std::make_unique<AdaGrad>(
-                learningRate, l2Reg, weights.elementCount(), biases.elementCount(),
-                numBatch, numData);
+                learningRate, l2Reg, numBatch, numData);
 
 }
 
 void Layer::setRMSProp(float learningRate, float l2Reg, int numBatch, int numData, float decay)
 {
     this->trainer = std::make_unique<RmsProp>(
-                learningRate, l2Reg, weights.elementCount(), biases.elementCount(),
-                numBatch, numData, decay);
+                learningRate, l2Reg, numBatch, numData, decay);
 
 }
 
@@ -51,8 +49,8 @@ void Layer::updateParameters()
 {
     if (trainer)
     {
-        trainer->updateParameters(weights.dataAddress(), weight_delta.dataAddress(),
-                                  biases.dataAddress(), bias_delta.dataAddress());
+        trainer->updateParameters(weights.dataAddress(), weight_delta.dataAddress(), weights.elementCount(),
+                                  biases.dataAddress(), bias_delta.dataAddress(), biases.elementCount());
     }
 }
 

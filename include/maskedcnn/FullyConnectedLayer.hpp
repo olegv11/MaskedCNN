@@ -11,7 +11,7 @@ namespace MaskedCNN
 class FullyConnectedLayer : public Layer
 {
 public:
-    FullyConnectedLayer(int input, int neurons, std::unique_ptr<Activation> activation);
+    FullyConnectedLayer(std::unique_ptr<Activation> activation, int neurons);
     virtual void forwardPropagate(const Tensor<float> &input) override;
     virtual void backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta) override;
     virtual std::vector<int> getOutputDimensions() override;

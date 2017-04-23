@@ -4,35 +4,41 @@
 
 namespace MaskedCNN {
 
-ConvolutionalLayer::ConvolutionalLayer(std::vector<int> dims, std::unique_ptr<Activation> activation, int stride,
-                                       int filterSize, int pad, int featureMaps)
+ConvolutionalLayer::ConvolutionalLayer(std::unique_ptr<Activation> activation, int stride, int filterSize, int pad,
+                                       int filterDepth, int featureMaps)
     :Layer(), activation(std::move(activation)), pad(pad),
-      stride(stride), filterSize(filterSize), outputChannels(featureMaps)
+      stride(stride), filterSize(filterSize), filterDepth(filterDepth), outputChannels(featureMaps)
 {
-    assert(dims.size() == 3);
-    filterDepth = dims[0];
-    inputHeight = dims[1];
-    inputWidth = dims[2];
-
-    outputWidth = std::floor((inputWidth + pad * 2 - filterSize) / (double)stride + 1);
-    outputHeight = std::floor((inputHeight + pad * 2  - filterSize) / (double)stride + 1);
 
     weights.resize({outputChannels, filterDepth, filterSize, filterSize});
     weight_delta.resize({outputChannels, filterDepth, filterSize, filterSize});
 
     biases.resize({outputChannels});
     bias_delta.resize({outputChannels});
-
-    z.resize({outputChannels, outputHeight, outputWidth});
-    dy_dz.resize({outputChannels, outputHeight, outputWidth});
-    delta.resize({outputChannels, outputHeight, outputWidth});
-    output.resize({outputChannels, outputHeight, outputWidth});
 }
 
 
 void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
 {
-    z.zero();
+    if (isTraining && !initDone)
+    {
+        initializeWeightsNormalDistrCorrectedVar();
+        initDone = true;
+    }
+
+    auto dims = input.dimensions();
+    assert(dims.size() == 3);
+    assert(filterDepth == dims[0]);
+    inputHeight = dims[1];
+    inputWidth = dims[2];
+
+    outputWidth = std::floor((inputWidth + pad * 2 - filterSize) / (double)stride + 1);
+    outputHeight = std::floor((inputHeight + pad * 2  - filterSize) / (double)stride + 1);
+
+    z.resize({outputChannels, outputHeight, outputWidth});
+    dy_dz.resize({outputChannels, outputHeight, outputWidth});
+    delta.resize({outputChannels, outputHeight, outputWidth});
+    output.resize({outputChannels, outputHeight, outputWidth});
 
     convolution(input, weights, z, filterSize, stride, pad);
     for (int d = 0; d < outputChannels; d++)

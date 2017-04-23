@@ -8,7 +8,7 @@ namespace MaskedCNN {
 class DropoutLayer : public Layer
 {
 public:
-    DropoutLayer(std::vector<int> dims, double dropProbability);
+    DropoutLayer(double dropProbability);
 
     virtual void forwardPropagate(const Tensor<float>& input) override;
     virtual void backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta) override;

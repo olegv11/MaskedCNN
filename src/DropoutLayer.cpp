@@ -8,17 +8,20 @@ static std::mt19937 gen(rd());
 std::uniform_real_distribution<double> distr(0.0, 1.0);
 
 
-DropoutLayer::DropoutLayer(std::vector<int> dims, double dropProbability)
+DropoutLayer::DropoutLayer(double dropProbability)
     : dropProbability(dropProbability)
 {
-    output.resize(dims);
-    dropped.resize({output.elementCount()});
-    delta.resize(dims);
 }
 
 
 void DropoutLayer::forwardPropagate(const Tensor<float>& input)
 {
+    auto dims = input.dimensions();
+    output.resize(dims);
+    dropped.resize({output.elementCount()});
+    delta.resize(dims);
+
+
     Tensor<float> flatInput(input, shallow_copy{});
     Tensor<float> flatOutput(output, shallow_copy{});
     int elementCount = flatInput.elementCount();

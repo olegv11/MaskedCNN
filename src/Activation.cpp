@@ -12,7 +12,7 @@ void ReLu::activate(const float *__restrict__ x, float *__restrict__ y, float *_
     }
 }
 
-void Sigmoid::activate(const float *x, float *y, float *delta, int num)
+void Sigmoid::activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
 {
     for (int i = 0; i < num; i++)
     {
@@ -21,13 +21,22 @@ void Sigmoid::activate(const float *x, float *y, float *delta, int num)
     }
 }
 
-void Tanh::activate(const float *x, float *y, float *delta, int num)
+void Tanh::activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
 {
     for (int i = 0; i < num; i++)
     {
         float t = std::exp(2 * x[i]);
         y[i] = (t - 1) / (t + 1);
         delta[i] = (1 - y[i] * y[i]);
+    }
+}
+
+void Id::activate(const float *__restrict__ x, float *__restrict__ y, float *__restrict__ delta, int num)
+{
+    for (int i = 0; i < num; i++)
+    {
+        y[i] = x[i];
+        delta[i] = 1;
     }
 }
 
