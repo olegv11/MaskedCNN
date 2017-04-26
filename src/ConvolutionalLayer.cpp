@@ -5,15 +5,31 @@
 namespace MaskedCNN {
 
 BaseConvolutionalLayer::BaseConvolutionalLayer(std::unique_ptr<Activation> activation, int stride, int filterSize,
-                                               int pad, int filterDepth, int featureMaps)
+                                               int pad, int filterDepth, int featureMaps, std::string name)
     :Layer(), activation(std::move(activation)), pad(pad),
       stride(stride), filterSize(filterSize), filterDepth(filterDepth), outputChannels(featureMaps)
 {
+    this->name = name;
     weights.resize({outputChannels, filterDepth, filterSize, filterSize});
     weight_delta.resize({outputChannels, filterDepth, filterSize, filterSize});
 
     biases.resize({outputChannels});
     bias_delta.resize({outputChannels});
+}
+
+BaseConvolutionalLayer::BaseConvolutionalLayer(std::unique_ptr<Activation> activation, Tensor<float>&& weights, Tensor<float>&& biases,
+                                               int stride, int pad, std::string name)
+    :Layer(std::move(weights), std::move(biases), name), activation(std::move(activation)), pad(pad), stride(stride)
+{
+    std::cout << name;
+    auto dims = this->weights.dimensions();
+
+    assert(dims.size() == 4);
+    assert(dims[2] == dims[3]);
+
+    outputChannels = dims[0];
+    filterDepth = dims[1];
+    filterSize = dims[2];
 }
 
 std::vector<int> BaseConvolutionalLayer::getOutputDimensions()
@@ -29,71 +45,44 @@ int BaseConvolutionalLayer::getNeuronInputNumber() const
 
 
 ConvolutionalLayer::ConvolutionalLayer(std::unique_ptr<Activation> activation, int stride, int filterSize, int pad,
-                                       int filterDepth, int featureMaps)
-    : BaseConvolutionalLayer(std::move(activation), stride, filterSize, pad, filterDepth, featureMaps)
+                                       int filterDepth, int featureMaps, std::string name)
+    : BaseConvolutionalLayer(std::move(activation), stride, filterSize, pad, filterDepth, featureMaps, name)
+{
+
+}
+
+ConvolutionalLayer::ConvolutionalLayer(std::unique_ptr<Activation> activation, Tensor<float>&& weights, Tensor<float>&& biases,
+                                       int stride, int pad, std::string name)
+    :BaseConvolutionalLayer(std::move(activation), std::move(weights), std::move(biases), stride, pad, name)
 {
 
 }
 
 DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activation, int stride, int filterSize, int pad,
-                                       int filterDepth, int featureMaps)
+                                       int filterDepth, int featureMaps, std::string name)
     : BaseConvolutionalLayer(std::move(activation), stride, filterSize, pad, filterDepth, featureMaps)
 {
     assert(pad == 0);
+    this->name = name;
 }
 
-void DeconvolutionalLayer::forwardPropagate(const Tensor<float> &input)
+DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activation, Tensor<float>&& weights, Tensor<float>&& biases, int stride, int pad, std::string name)
+    :BaseConvolutionalLayer(std::move(activation), std::move(weights), std::move(biases), stride, pad)
 {
+    assert(pad == 0);
+    this->name = name;
+}
+
+void ConvolutionalLayer::forwardPropagate()
+{
+    std::cout << "Forward start " << name << std::endl;
     if (isTraining && !initDone)
     {
         initializeWeightsNormalDistrCorrectedVar();
         initDone = true;
     }
 
-    auto dims = input.dimensions();
-    assert(dims.size() == 3);
-    assert(filterDepth == dims[0]);
-    inputHeight = dims[1];
-    inputWidth = dims[2];
-
-    outputWidth = stride * (inputWidth - 1) + filterSize;
-    outputHeight = stride * (inputHeight - 1) + filterSize;
-
-    z.resize({outputChannels, outputHeight, outputWidth});
-    dy_dz.resize({outputChannels, outputHeight, outputWidth});
-    delta.resize({outputChannels, outputHeight, outputWidth});
-    output.resize({outputChannels, outputHeight, outputWidth});
-
-    transposedConvolution(input, weights, z, filterSize, stride, pad);
-    for (int d = 0; d < outputChannels; d++)
-    {
-        for (int ay = 0; ay < outputHeight; ay++)
-        {
-            for (int ax = 0; ax < outputWidth; ax++)
-            {
-                z(d, ay, ax) += biases[d];
-            }
-        }
-    }
-
-    activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
-}
-
-void DeconvolutionalLayer::backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta)
-{
-    (void)input;
-    (void)prevDelta;
-    assert(false);
-}
-
-
-void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
-{
-    if (isTraining && !initDone)
-    {
-        initializeWeightsNormalDistrCorrectedVar();
-        initDone = true;
-    }
+    const Tensor<float> &input = *bottoms[0]->getOutput();
 
     auto dims = input.dimensions();
     assert(dims.size() == 3);
@@ -124,10 +113,55 @@ void ConvolutionalLayer::forwardPropagate(const Tensor<float> &input)
     activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
 }
 
-
-
-void ConvolutionalLayer::backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta)
+void DeconvolutionalLayer::forwardPropagate()
 {
+    if (isTraining && !initDone)
+    {
+        initializeWeightsNormalDistrCorrectedVar();
+        initDone = true;
+    }
+
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+
+    auto dims = input.dimensions();
+    assert(dims.size() == 3);
+    assert(filterDepth == dims[0]);
+    inputHeight = dims[1];
+    inputWidth = dims[2];
+
+    outputWidth = stride * (inputWidth - 1) + filterSize;
+    outputHeight = stride * (inputHeight - 1) + filterSize;
+
+    z.resize({outputChannels, outputHeight, outputWidth});
+    dy_dz.resize({outputChannels, outputHeight, outputWidth});
+    delta.resize({outputChannels, outputHeight, outputWidth});
+    output.resize({outputChannels, outputHeight, outputWidth});
+
+    transposedConvolution(input, weights, z, filterSize, stride, pad);
+    for (int d = 0; d < outputChannels; d++)
+    {
+        for (int ay = 0; ay < outputHeight; ay++)
+        {
+            for (int ax = 0; ax < outputWidth; ax++)
+            {
+                z(d, ay, ax) += biases[d];
+            }
+        }
+    }
+
+    activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
+}
+
+void DeconvolutionalLayer::backwardPropagate()
+{
+    assert(false);
+}
+
+void ConvolutionalLayer::backwardPropagate()
+{
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+    Tensor<float> &prevDelta = *bottoms[0]->getDelta();
+
     prevDelta.zero();
     weight_delta.zero();
     bias_delta.zero();

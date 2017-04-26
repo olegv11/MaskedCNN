@@ -71,10 +71,10 @@ public:
     double mean();
     T max();
     void add(T value);
+    void add(float b, float g, float r);
     void mul(T value);
 
     std::string toString() const;
-
 
 private:
     std::vector<int> dims;
@@ -238,8 +238,8 @@ template<typename T>
 const T& Tensor<T>::operator()(int channel, int row, int column) const
 {
    assert(dimensionCount() == 3);
-   assert(row < this->dims[2] && row >= 0);
-   assert(column < this->dims[1] && column >= 0);
+   assert(column < this->dims[2] && column >= 0);
+   assert(row < this->dims[1] && row >= 0);
    assert(channel < this->dims[0] && channel >= 0);
 
    return data[(channel * dims[1] + row) * dims[2] + column];
@@ -434,6 +434,20 @@ void Tensor<T>::add(T value)
     for (int i = 0; i < els; i++)
     {
         data[i] += value;
+    }
+}
+
+template<typename T>
+void Tensor<T>::add(float b, float g, float r)
+{
+    for (int y = 0; y < columnLength(); y++)
+    {
+        for (int x = 0; x < rowLength(); x++)
+        {
+            operator()(0,y,x) += b;
+            operator()(1,y,x) += g;
+            operator()(2,y,x) += r;
+        }
     }
 }
 

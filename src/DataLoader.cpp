@@ -115,9 +115,13 @@ void CIFARDataLoader::loadSmallData()
     loadTrainDataSmall();
 }
 
-Tensor<float> CIFARDataLoader::loadImage(const std::string& path)
+Tensor<float> loadImage(const std::string& path)
 {
     cv::Mat image = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+
+    //cv::Rect rect(110, 70, 150, 150);
+    //cv::Mat cropped = image(rect);
+
     cv::Mat BGR[3];
     cv::split(image, BGR);
 
@@ -127,9 +131,9 @@ Tensor<float> CIFARDataLoader::loadImage(const std::string& path)
     {
         for (int x = 0; x < image.cols; x++)
         {
-            result(0, y, x) = BGR[0].at<uchar>(x,y);
-            result(1, y, x) = BGR[1].at<uchar>(x,y);
-            result(2, y, x) = BGR[2].at<uchar>(x,y);
+            result(0, y, x) = BGR[0].at<uchar>(y,x);
+            result(1, y, x) = BGR[1].at<uchar>(y,x);
+            result(2, y, x) = BGR[2].at<uchar>(y,x);
         }
     }
 

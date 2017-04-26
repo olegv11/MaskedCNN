@@ -13,15 +13,17 @@ SoftmaxLayer::SoftmaxLayer(int numClasses)
     output.resize({numClasses});
 }
 
-void SoftmaxLayer::forwardPropagate(const Tensor<float>& input)
+void SoftmaxLayer::forwardPropagate()
 {
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+    std::cout << "Forward start" << name << std::endl;
     assert(input.dimensions() == std::vector<int>{numClasses});
     softmax(&input[0], &output[0], numClasses);
 }
 
-void SoftmaxLayer::backwardPropagate(const Tensor<float>&input, Tensor<float>& prevDelta)
+void SoftmaxLayer::backwardPropagate()
 {
-    (void)input;
+    Tensor<float> &prevDelta = *bottoms[0]->getDelta();
     assert(prevDelta.dimensions() == std::vector<int>{numClasses});
     prevDelta.zero();
 
@@ -61,7 +63,7 @@ void softmax(const float *__restrict__ x, float *__restrict__ y, int num)
         }
     }
 
-    float sum = 0;
+    float sum = 1e-9;
     for (int i = 0; i < num; i++)
     {
         y[i] = std::exp(x[i] - maxValue);
@@ -77,5 +79,3 @@ void softmax(const float *__restrict__ x, float *__restrict__ y, int num)
 }
 
 }
-
-

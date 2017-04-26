@@ -38,6 +38,8 @@ void convolution(const Tensor<float> &input, const Tensor<float> &filter, Tensor
                         {
                             for (int fd = 0; fd < filterDepth; fd++)
                             {
+                                //std::cout << "out(" << d << "," << ay << "," << ax << ") "
+                                //          << out(d, ay, ax) << "+=" << input(fd, oy, ox) << "*" << filter(d, fd, fy, fx) << std::endl;
                                 out(d, ay, ax) += input(fd, oy, ox) * filter(d, fd, fy, fx);
                             }
                         }
@@ -95,7 +97,7 @@ void transposedConvolution(const Tensor<float>& input, const Tensor<float>& filt
                     {
                         for (int fd = 0; fd < inputChannels; fd++)
                         {
-                            //std::cerr << "out(" << d << "," << ay / stride - shiftUp << "," << ax / stride - shiftLeft <<") "
+                            //std::cout << "out(" << d << "," << ay / stride - shiftUp << "," << ax / stride - shiftLeft <<") "
                             //          << out(d, ay / stride - shiftUp, ax / stride - shiftLeft) << "+=" << input(fd, oy / stride, ox / stride) << "*" << filter(fd, d, fy, fx) << std::endl;
                             out(d, ay / stride - shiftUp, ax / stride - shiftLeft) += input(fd, oy / stride, ox / stride) * filter(fd, d, fy, fx);
                         }

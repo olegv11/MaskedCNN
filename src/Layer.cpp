@@ -14,9 +14,20 @@ Layer::Layer()
 }
 
 
-Layer::Layer(Tensor<float> &&weights, Tensor<float> &&biases)
+Layer::Layer(Tensor<float> &&weights, Tensor<float> &&biases, std::string name)
     :weights(std::move(weights)), biases(std::move(biases)), initDone(false)
 {
+    this->name = name;
+}
+
+void Layer::addBottom(Layer *layer)
+{
+    bottoms.push_back(layer);
+}
+
+std::string Layer::getName() const
+{
+    return name;
 }
 
 

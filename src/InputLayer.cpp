@@ -3,23 +3,24 @@
 namespace MaskedCNN
 {
 
-void InputLayer::forwardPropagate(const Tensor<float>& input)
+void InputLayer::forwardPropagate()
 {
-    assert(output.dimensions() == input.dimensions());
-    output = input;
 }
 
 // Doesn't make sense to backprop from the first layer
-void InputLayer::backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta)
+void InputLayer::backwardPropagate()
 {
-    (void)input;
-    (void) prevDelta;
     assert(false);
 }
 
 std::vector<int> InputLayer::getOutputDimensions()
 {
     return output.dimensions();
+}
+
+void InputLayer::setInput(const Tensor<float> input)
+{
+    output = input;
 }
 
 }

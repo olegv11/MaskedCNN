@@ -8,8 +8,8 @@ class SoftmaxLayer : public Layer
 public:
     SoftmaxLayer(int numClasses);
 
-    virtual void forwardPropagate(const Tensor<float>& input) override;
-    virtual void backwardPropagate(const Tensor<float> &input, Tensor<float>& prevDelta) override;
+    virtual void forwardPropagate() override;
+    virtual void backwardPropagate() override;
     virtual std::vector<int> getOutputDimensions() override;
 
     float getLoss() const;

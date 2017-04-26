@@ -2,26 +2,32 @@
 #include <limits>
 namespace MaskedCNN {
 
-PoolLayer::PoolLayer(int windowWidth, int windowHeight, int channels)
-    :channels(channels), windowWidth(windowWidth), windowHeight(windowHeight)
+PoolLayer::PoolLayer(int windowWidth, int windowHeight, std::string name)
+    : windowWidth(windowWidth), windowHeight(windowHeight)
 {
+    this->name = name;
 }
 
-void PoolLayer::forwardPropagate(const Tensor<float>& input)
+void PoolLayer::forwardPropagate()
 {
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+    std::cout << "Forward start" << name << std::endl;
+
     auto dims = input.dimensions();
 
-    assert(channels == dims[0]);
+    channels = dims[0];
     inputHeight = dims[1];
     inputWidth = dims[2];
-    output.resize({channels, inputHeight / windowHeight, inputWidth / windowWidth});
-    delta.resize({channels, inputHeight / windowHeight, inputWidth / windowWidth});
+    outputHeight = (inputHeight + windowHeight - 1) / windowHeight;
+    outputWidth = (inputWidth + windowWidth - 1) / windowWidth;
+    output.resize({channels, outputHeight, outputWidth});
+    delta.resize({channels, outputHeight, outputWidth});
 
     for (int i = 0; i < output.channelLength(); i++)
     {
-        for (int j = 0; j < output.columnLength(); j++)
+        for (int j = 0; j < outputHeight; j++)
         {
-            for (int k = 0; k < output.rowLength(); k++)
+            for (int k = 0; k < outputWidth; k++)
             {
                 float max_float = std::numeric_limits<float>::lowest();
 
@@ -29,7 +35,16 @@ void PoolLayer::forwardPropagate(const Tensor<float>& input)
                 {
                     for (int dx = 0; dx < windowWidth; dx++)
                     {
-                        float currentEl = input(i, j * windowHeight + dy, k * windowWidth + dx);
+                        int y = j * windowHeight + dy;
+                        int x = k * windowWidth + dx;
+
+                        float currentEl = 0;
+
+                        if (y >= 0 && y < inputHeight && x >= 0 && x < inputWidth)
+                        {
+                            currentEl = input(i, j * windowHeight + dy, k * windowWidth + dx);
+                        }
+
                         if (currentEl > max_float)
                         {
                             max_float = currentEl;
@@ -43,8 +58,11 @@ void PoolLayer::forwardPropagate(const Tensor<float>& input)
     }
 }
 
-void PoolLayer::backwardPropagate(const Tensor<float>& input, Tensor<float>& prevDelta)
+void PoolLayer::backwardPropagate()
 {
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+    Tensor<float> &prevDelta = *bottoms[0]->getDelta();
+
     assert(prevDelta.dimensions() == std::vector<int>({channels, inputHeight, inputWidth}));
 
     for (int i = 0; i < output.channelLength(); i++)

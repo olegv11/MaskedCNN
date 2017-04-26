@@ -5,18 +5,21 @@ namespace MaskedCNN {
 // Weight: [Neuron Count x Input count]
 // Bias: [Neuron Count]
 
-FullyConnectedLayer::FullyConnectedLayer(std::unique_ptr<Activation> activation, int neurons)
+FullyConnectedLayer::FullyConnectedLayer(std::unique_ptr<Activation> activation, int neurons, std::string name)
     :activation(std::move(activation)), neurons(neurons)
 {
     z.resize({ neurons });
     dy_dz.resize({ neurons });
     delta.resize({ neurons });
     output.resize({ neurons });
+    this->name = name;
 }
 
 
-void FullyConnectedLayer::forwardPropagate(const Tensor<float> &input)
+void FullyConnectedLayer::forwardPropagate()
 {
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+
     if (isTraining)
     {
         if (!initDone)
@@ -54,8 +57,11 @@ void FullyConnectedLayer::forwardPropagate(const Tensor<float> &input)
 
 
 // delta should be equal to de/dy by now
-void FullyConnectedLayer::backwardPropagate(const Tensor<float> &input, Tensor<float> &prevDelta)
+void FullyConnectedLayer::backwardPropagate()
 {
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+    Tensor<float> &prevDelta = *bottoms[0]->getDelta();
+
     Tensor<float> flatInput(const_cast<Tensor<float>&>(input), shallow_copy{});
     flatInput.flatten();
     assert(flatInput.elementCount() == weights.rowLength());

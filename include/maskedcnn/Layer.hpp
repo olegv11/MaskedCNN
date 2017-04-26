@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "Tensor.hpp"
 #include "TrainingRegime.hpp"
 namespace MaskedCNN
@@ -10,15 +11,18 @@ class Layer
 {
 public:
     Layer();
-    Layer(Tensor<float>&& weights, Tensor<float>&& biases);
+    Layer(Tensor<float>&& weights, Tensor<float>&& biases, std::string name = "");
     virtual ~Layer() = default;
-    virtual void forwardPropagate(const Tensor<float>& input) = 0;
-    virtual void backwardPropagate(const Tensor<float> &input, Tensor<float>& prevDelta) = 0;
+    virtual void forwardPropagate() = 0;
+    virtual void backwardPropagate() = 0;
     virtual std::vector<int> getOutputDimensions() = 0;
     virtual int getNeuronInputNumber() const { return 0; }
+    void addBottom(Layer *layer);
 
-    const Tensor<float> *getOutput();
-    Tensor<float> *getDelta();
+    std::string getName() const;
+
+    virtual const Tensor<float> *getOutput();
+    virtual Tensor<float> *getDelta();
 
     void setTrainingMode(bool isTraining);
 
@@ -33,6 +37,7 @@ public:
     void updateParameters();
 
 protected:
+    std::string name;
     Tensor<float> z;
     Tensor<float> weights;
     Tensor<float> biases;
@@ -47,6 +52,7 @@ protected:
     bool initDone;
 
     std::unique_ptr<TrainingRegime> trainer;
+    std::vector<Layer*> bottoms;
 };
 
 }

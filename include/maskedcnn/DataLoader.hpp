@@ -6,6 +6,8 @@
 namespace MaskedCNN
 {
 
+Tensor<float> loadImage(const std::string& path);
+
 class CIFARDataLoader
 {
 public:
@@ -21,7 +23,6 @@ public:
 
     int trainCount() const { return trainImages.size(); }
 
-
 private:
     void loadLabels();
     void loadTestData();
@@ -29,7 +30,6 @@ private:
     void loadTrainDataSmall();
 
     void normalizeData();
-    Tensor<float> loadImage(const std::string& imageName);
 
     std::string basePath;
     std::vector<std::string> labels;
