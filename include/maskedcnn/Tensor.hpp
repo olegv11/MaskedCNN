@@ -37,6 +37,7 @@ public:
     int channel2Length() const { return dims[dimensionCount() - 4]; }
 
     float* dataAddress();
+    const float* dataAddress() const;
 
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
@@ -195,6 +196,12 @@ float* Tensor<T>::dataAddress()
 }
 
 template<typename T>
+const float* Tensor<T>::dataAddress() const
+{
+    return data;
+}
+
+template<typename T>
 T& Tensor<T>::operator[](size_t index)
 {
     return data[index];
@@ -304,10 +311,10 @@ void Tensor<T>::resize(const std::vector<int> &dimensions)
     {
         delete[] data;
         data = new T[multiplyAllElements(dimensions)];
+        std::fill_n(data, elementCount(), T{0});
     }
 
     dims = dimensions;
-    std::fill_n(data, elementCount(), T{0});
 }
 
 template<typename T>

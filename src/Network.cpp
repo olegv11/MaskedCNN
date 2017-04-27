@@ -79,7 +79,6 @@ int main()
                 {
                     max = c;
                     maxel = data->operator()(c, y, x);
-                    std::cout << "HOLY SHIT" << std::endl;
                 }
             }
             out << max << " ";

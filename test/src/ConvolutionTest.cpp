@@ -36,6 +36,7 @@ protected:
     Tensor<float> weights;
     Tensor<float> matrix;
     Tensor<float> delta;
+    Tensor<float> colBuffer;
 };
 
 TEST_F(ConvolutionTest, SimpleConvolution) {
@@ -47,7 +48,7 @@ TEST_F(ConvolutionTest, SimpleConvolution) {
 
     Tensor<float> output(std::vector<int>{1,3,3});
 
-    convolution(matrix, weights, output, 3, 1, 0);
+    convolutionIm2Col(matrix, weights, colBuffer, output, 3, 1, 0);
 
     for (int i = 0; i < 3; i++)
     {
@@ -67,7 +68,7 @@ TEST_F(ConvolutionTest, PaddedStridedConvolution) {
 
     Tensor<float> output(std::vector<int>{1,3,3});
 
-    convolution(matrix, weights, output, 3, 2, 1);
+    convolutionIm2Col(matrix, weights, colBuffer, output, 3, 2, 1);
 
     for (int i = 0; i < 3; i++)
     {
@@ -92,7 +93,7 @@ TEST_F(ConvolutionTest, MultidimensionalSimpleConvolution) {
 
     Tensor<float> output(std::vector<int>{1,1,1});
 
-    convolution(input, filter, output, 1, 1, 0);
+    convolutionIm2Col(input, filter, colBuffer, output, 1, 1, 0);
 
     ASSERT_FLOAT_EQ(output(0,0,0), 136);
 }

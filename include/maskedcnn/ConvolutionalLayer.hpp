@@ -24,6 +24,7 @@ protected:
     int filterDepth;
     int outputWidth, outputHeight, outputChannels;
     int inputWidth, inputHeight;
+    Tensor<float> colBuffer;
 };
 
 class ConvolutionalLayer : public BaseConvolutionalLayer

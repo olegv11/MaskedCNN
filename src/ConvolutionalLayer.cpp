@@ -76,29 +76,35 @@ DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activatio
 void ConvolutionalLayer::forwardPropagate()
 {
     std::cout << "Forward start " << name << std::endl;
-    if (isTraining && !initDone)
+    const Tensor<float> &input = *bottoms[0]->getOutput();
+
+    if (!initDone)
     {
-        initializeWeightsNormalDistrCorrectedVar();
+        if (isTraining)
+        {
+            initializeWeightsNormalDistrCorrectedVar();
+        }
+
+        auto dims = input.dimensions();
+        assert(dims.size() == 3);
+        assert(filterDepth == dims[0]);
+        inputHeight = dims[1];
+        inputWidth = dims[2];
+
+        outputWidth = std::floor((inputWidth + pad * 2 - filterSize) / (double)stride + 1);
+        outputHeight = std::floor((inputHeight + pad * 2  - filterSize) / (double)stride + 1);
+
+        z.resize({outputChannels, outputHeight, outputWidth});
+        dy_dz.resize({outputChannels, outputHeight, outputWidth});
+        delta.resize({outputChannels, outputHeight, outputWidth});
+        output.resize({outputChannels, outputHeight, outputWidth});
+
+        std::vector<int> colBufferShape;
+
         initDone = true;
     }
 
-    const Tensor<float> &input = *bottoms[0]->getOutput();
-
-    auto dims = input.dimensions();
-    assert(dims.size() == 3);
-    assert(filterDepth == dims[0]);
-    inputHeight = dims[1];
-    inputWidth = dims[2];
-
-    outputWidth = std::floor((inputWidth + pad * 2 - filterSize) / (double)stride + 1);
-    outputHeight = std::floor((inputHeight + pad * 2  - filterSize) / (double)stride + 1);
-
-    z.resize({outputChannels, outputHeight, outputWidth});
-    dy_dz.resize({outputChannels, outputHeight, outputWidth});
-    delta.resize({outputChannels, outputHeight, outputWidth});
-    output.resize({outputChannels, outputHeight, outputWidth});
-
-    convolution(input, weights, z, filterSize, stride, pad);
+    convolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
     for (int d = 0; d < outputChannels; d++)
     {
         for (int ay = 0; ay < outputHeight; ay++)
@@ -115,27 +121,32 @@ void ConvolutionalLayer::forwardPropagate()
 
 void DeconvolutionalLayer::forwardPropagate()
 {
-    if (isTraining && !initDone)
-    {
-        initializeWeightsNormalDistrCorrectedVar();
-        initDone = true;
-    }
-
+    std::cout << "Forward start " << name << std::endl;
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
-    auto dims = input.dimensions();
-    assert(dims.size() == 3);
-    assert(filterDepth == dims[0]);
-    inputHeight = dims[1];
-    inputWidth = dims[2];
+    if (!initDone)
+    {
+        if (isTraining)
+        {
+            initializeWeightsNormalDistrCorrectedVar();
+        }
 
-    outputWidth = stride * (inputWidth - 1) + filterSize;
-    outputHeight = stride * (inputHeight - 1) + filterSize;
+        auto dims = input.dimensions();
+        assert(dims.size() == 3);
+        assert(filterDepth == dims[0]);
+        inputHeight = dims[1];
+        inputWidth = dims[2];
 
-    z.resize({outputChannels, outputHeight, outputWidth});
-    dy_dz.resize({outputChannels, outputHeight, outputWidth});
-    delta.resize({outputChannels, outputHeight, outputWidth});
-    output.resize({outputChannels, outputHeight, outputWidth});
+        outputWidth = stride * (inputWidth - 1) + filterSize - 2 * pad;
+        outputHeight = stride * (inputHeight - 1) + filterSize - 2 * pad;
+
+        z.resize({outputChannels, outputHeight, outputWidth});
+        dy_dz.resize({outputChannels, outputHeight, outputWidth});
+        delta.resize({outputChannels, outputHeight, outputWidth});
+        output.resize({outputChannels, outputHeight, outputWidth});
+
+        initDone = true;
+    }
 
     transposedConvolution(input, weights, z, filterSize, stride, pad);
     for (int d = 0; d < outputChannels; d++)
