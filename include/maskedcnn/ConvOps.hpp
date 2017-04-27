@@ -15,7 +15,7 @@ void convolution(const Tensor<float> &input, const Tensor<float> &filter, Tensor
     int outputChannels = out.dimensions()[0];
     int outputHeight = out.dimensions()[1];
     int outputWidth = out.dimensions()[2];
-    int filterDepth = input.dimensions()[0];
+    int inputChannels = input.dimensions()[0];
     int inputHeight = input.dimensions()[1];
     int inputWidth = input.dimensions()[2];
 
@@ -36,7 +36,7 @@ void convolution(const Tensor<float> &input, const Tensor<float> &filter, Tensor
                     {
                         for (int d = 0; d < outputChannels; d++)
                         {
-                            for (int fd = 0; fd < filterDepth; fd++)
+                            for (int fd = 0; fd < inputChannels; fd++)
                             {
                                 //std::cout << "out(" << d << "," << ay << "," << ax << ") "
                                 //          << out(d, ay, ax) << "+=" << input(fd, oy, ox) << "*" << filter(d, fd, fy, fx) << std::endl;
@@ -97,16 +97,18 @@ void transposedConvolution(const Tensor<float>& input, const Tensor<float>& filt
                     {
                         for (int fd = 0; fd < inputChannels; fd++)
                         {
-                            //std::cout << "out(" << d << "," << ay / stride - shiftUp << "," << ax / stride - shiftLeft <<") "
-                            //          << out(d, ay / stride - shiftUp, ax / stride - shiftLeft) << "+=" << input(fd, oy / stride, ox / stride) << "*" << filter(fd, d, fy, fx) << std::endl;
-                            out(d, ay / stride - shiftUp, ax / stride - shiftLeft) += input(fd, oy / stride, ox / stride) * filter(fd, d, fy, fx);
+                            /*std::cout << "out(" << d << "," << (ay - shiftUp)/ stride << "," << (ax  - shiftLeft)/ stride <<") "
+                                      << out(d, (ay - shiftUp)/ stride, (ax  - shiftLeft)/ stride) << "+=input(" << fd <<","<<oy / stride<<","<<ox/stride<<") * filter("
+                                      <<fd<<","<<d<<","<<fy<<","<<fx<<") "
+                                      << input(fd, oy / stride, ox / stride) << "*" << filter(fd, d, fy, fx) << std::endl;*/
+                            out(d, (ay - shiftUp), (ax  - shiftLeft)) += input(fd, oy / stride, ox / stride) * filter(fd, d, fy, fx);
                         }
                     }
                 }
-                //std::cerr << std::endl;
             }
         }
     }
+    //std::cout << std::endl;
 }
 
 

@@ -26,7 +26,7 @@ void EltwiseLayer::forwardPropagate()
     for (const auto& bottom : bottoms)
     {
         const auto& input = *bottom->getOutput();
-        assert(input->dimensions() == output.dimensions());
+        assert(input.dimensions() == output.dimensions());
 
         for (int c = 0; c < output.channelLength(); c++)
         {

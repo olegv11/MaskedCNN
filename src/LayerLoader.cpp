@@ -67,6 +67,19 @@ std::vector<std::unique_ptr<Layer>> loadCaffeNet(std::string path, int width, in
                 }
             }
 
+            std::cout << std::endl;
+            if (p.type() == "Deconvolution")
+            {
+                for (int y = 32; y < 37; y++)
+                {
+                    for (int x = 11; x < 16; x++)
+                    {
+                        std::cout << weightTensor(15,15,y,x) << " ";
+                    }
+                    std::cout << std::endl;
+                }
+            }
+
             Tensor<float> biasTensor(std::vector<int>{oc});
             if (p.blobs_size() >= 2)
             {

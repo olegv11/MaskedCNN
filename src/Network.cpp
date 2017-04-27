@@ -58,11 +58,11 @@ int main()
         }
         else
         {
-            std::cout << l.getOutput()->operator()(2,22,23) << std::endl;
+            std::cout << l.getOutput()->operator()(2,5,5) << std::endl;
         }
     }
 
-    const Tensor<float> *data = layers[layers.size() - 2]->getOutput();
+    const Tensor<float> *data = layers[layers.size() - 1]->getOutput();
 
     std::ofstream out("test");
 

@@ -70,7 +70,7 @@ DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activatio
     :BaseConvolutionalLayer(std::move(activation), std::move(weights), std::move(biases), stride, pad)
 {
     assert(pad == 0);
-    this->name = name;
+    this->name = name;    
 }
 
 void ConvolutionalLayer::forwardPropagate()

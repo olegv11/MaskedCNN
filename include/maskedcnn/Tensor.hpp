@@ -53,7 +53,7 @@ public:
 
     bool sameShape(const Tensor& other) const;
 
-    void reshape(std::vector<int> &dimensions);
+    void reshape(const std::vector<int> &dimensions);
     void reshape(int rowLength, int columnLength, int channelLength);
     void resize(const std::vector<int> &dimensions);
     void flatten();
@@ -275,7 +275,7 @@ bool Tensor<T>::sameShape(const Tensor &other) const
 }
 
 template<typename T>
-void Tensor<T>::reshape(std::vector<int> &dimensions)
+void Tensor<T>::reshape(const std::vector<int> &dimensions)
 {
     int newElementCount = multiplyAllElements(dimensions);
     if (newElementCount != elementCount())
