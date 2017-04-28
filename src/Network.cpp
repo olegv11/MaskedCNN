@@ -5,9 +5,19 @@
 #include <algorithm>
 #include <random>
 #include <iomanip>
+#include <array>
+#include <deque>
 
 #include <fstream>
 #include "LayerLoader.hpp"
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/photo/photo.hpp>
+
+#include <sys/times.h>
+
 
 using namespace MaskedCNN;
 
@@ -17,49 +27,81 @@ std::vector<std::unique_ptr<Layer>> layers;
 
 int main()
 {
-//    CIFARDataLoader loader("/home/oleg/Deep_learning/CIFAR-100/");
-//    loader.loadSmallData();
-
-//    createNetwork(25, loader.trainCount());
-//    train(loader, 25);
-
-    Tensor<float> image = loadImage("/home/oleg/image.jpeg");
-    image.add(-104.00699, -116.66877, -122.67892);
-
     layers = loadCaffeNet("/home/oleg/Deep_learning/fcn/fcn.berkeleyvision.org/voc-fcn32s/fcn32s-heavy-pascal.caffemodel", 320, 240, 3);
     for (uint32_t i = 0; i < layers.size(); i++)
     {
         layers[i]->setTrainingMode(false);
     }
 
-    dynamic_cast<InputLayer*>(layers[0].get())->setInput(image);
-
-    for (uint32_t i = 0; i < layers.size(); i++)
+    cv::VideoCapture cap = cv::VideoCapture("/home/oleg/videoSmooth.avi");
+    if (!cap.isOpened())
     {
-        auto& l = *layers[i];
-        l.forwardPropagate();
-        auto x = l.getOutputDimensions();
-        for (int j = 0; j < x.size(); j++)
+        throw std::exception();
+    }
+
+    cv::Mat frame;
+    cv::Mat prevFrame;
+    cap.read(prevFrame);
+
+    Tensor<float> mask(std::vector<int>{prevFrame.rows, prevFrame.cols});
+    while (true)
+    {
+        mask.zero();
+
+        cap.read(frame);
+        cv::Mat diff = cv::Mat::zeros(frame.rows, frame.cols, CV_8UC1);
+        cv::Mat lolmask(frame.rows, frame.cols, CV_8UC1);
+        cv::absdiff(frame, prevFrame, diff);
+        frame.copyTo(prevFrame);
+
+        for (int j = 0; j < frame.rows; j++)
         {
-            std::cout << x[j] << " ";
+            for (int i = 0; i < frame.cols; i++)
+            {
+                cv::Vec3b x = diff.at<cv::Vec3b>(j,i);
+                if (x[0] + x[1] + x[2] > 50)
+                {
+                    mask(j,i) = 255;
+                    lolmask.at<unsigned char>(j,i) = 255;
+                }
+                else
+                {
+                    mask(j,i) = 0;
+                    lolmask.at<unsigned char>(j,i) = 0;
+                }
+            }
         }
 
-        if (l.getName() == "fc6" || l.getName() == "fc7")
+        cv::namedWindow( "Camera", cv::WINDOW_AUTOSIZE );
+        cv::imshow("Camera", frame);
+        cv::namedWindow( "input mask", cv::WINDOW_AUTOSIZE );
+        cv::imshow("input mask", singleChannelTensorToMat(mask));
+        cv::waitKey(100);
+
+        Tensor<float> image = matToTensor(frame);
+        image.add(-104.00699, -116.66877, -122.67892);
+        dynamic_cast<InputLayer*>(layers[0].get())->setInput(image);
+        dynamic_cast<InputLayer*>(layers[0].get())->setMask(mask);
+
+        tms beginTime;
+        tms endTime;
+
+        times(&beginTime);
+        for (uint32_t i = 0; i < layers.size() - 1; i++)
         {
-            std::cout << l.getOutput()->operator()(101,2,3) << std::endl;
+            auto& l = *layers[i];
+            l.forwardPropagate();
+            l.setMaskEnabled(true);
         }
-        else if (l.getName() == "score_fr")
+        times(&endTime);
+
+        for (uint32_t i = 0; i < layers.size() - 1; i++)
         {
-            std::cout << l.getOutput()->operator()(10,1,6) << " " << l.getOutput()->operator()(10,2,6) << std::endl;
+            auto& l = *layers[i];
+            l.displayMask();
         }
-        else if (l.getName() == "upscore")
-        {
-            std::cout << l.getOutput()->operator()(5,20,20) << " " << l.getOutput()->operator()(15,50,190) << std::endl;
-        }
-        else
-        {
-            std::cout << l.getOutput()->operator()(2,5,5) << std::endl;
-        }
+
+        std::cout << endTime.tms_utime - beginTime.tms_utime << std::endl;
     }
 
     const Tensor<float> *data = layers[layers.size() - 1]->getOutput();

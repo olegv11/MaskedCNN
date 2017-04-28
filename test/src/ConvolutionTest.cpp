@@ -57,6 +57,57 @@ TEST_F(ConvolutionTest, SimpleConvolution) {
             ASSERT_FLOAT_EQ(result(i,j), output(0,i,j));
         }
     }
+
+
+}
+
+TEST_F(ConvolutionTest, SimpleMaskedConvolutionGivesRightResultWithFullMask)
+{
+    Tensor<float> result(std::vector<int>{3,3});
+
+    result(0,0) = 12; result(0,1) = 12; result(0,2) = 17;
+    result(1,0) = 10; result(1,1) = 17; result(1,2) = 19;
+    result(2,0) = 9;  result(2,1) = 6;  result(2,2) = 14;
+
+    Tensor<float> output(std::vector<int>{1,3,3});
+    Tensor<float> outputMask(std::vector<int>{3,3});
+    Tensor<float> outputBuffer(output.dimensions());
+
+    outputMask.fillwith(1);
+    convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 1, 0);
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            ASSERT_FLOAT_EQ(result(i,j), output(0,i,j));
+        }
+    }
+}
+
+TEST_F(ConvolutionTest, SimpleMaskedConvolutionGivesRightResultWithPartialMask)
+{
+    Tensor<float> result(std::vector<int>{3,3});
+
+    result(0,0) = 12; result(0,1) = 12; result(0,2) = 17;
+    result(1,0) = 10; result(1,1) = 17; result(1,2) = 19;
+    result(2,0) = 9;  result(2,1) = 6;  result(2,2) = 14;
+
+    Tensor<float> output(std::vector<int>{1,3,3});
+    Tensor<float> outputMask(std::vector<int>{3,3});
+    Tensor<float> outputBuffer(output.dimensions());
+
+    outputMask.fillwith(1);
+
+    outputMask(1,1) = 0; output(0,1,1) = 17;
+    outputMask(1,2) = 0; output(0,1,2) = 19;
+    convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 1, 0);
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            ASSERT_FLOAT_EQ(result(i,j), output(0,i,j));
+        }
+    }
 }
 
 TEST_F(ConvolutionTest, PaddedStridedConvolution) {
@@ -69,6 +120,60 @@ TEST_F(ConvolutionTest, PaddedStridedConvolution) {
     Tensor<float> output(std::vector<int>{1,3,3});
 
     convolutionIm2Col(matrix, weights, colBuffer, output, 3, 2, 1);
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            ASSERT_FLOAT_EQ(result(i,j), output(0,i,j));
+        }
+    }
+}
+
+TEST_F(ConvolutionTest, PaddedStridedConvolutionGivesRightResultWithFullMask)
+{
+    Tensor<float> result(std::vector<int>{3,3});
+
+    result(0,0) = 6; result(0,1) = 17; result(0,2) = 3;
+    result(1,0) = 8; result(1,1) = 17; result(1,2) = 13;
+    result(2,0) = 6;  result(2,1) = 4;  result(2,2) = 4;
+
+    Tensor<float> output(std::vector<int>{1,3,3});
+    Tensor<float> outputMask(std::vector<int>{3,3});
+    Tensor<float> outputBuffer(output.dimensions());
+
+    outputMask.fillwith(1);
+
+
+    convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 2, 1);
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            ASSERT_FLOAT_EQ(result(i,j), output(0,i,j));
+        }
+    }
+}
+
+TEST_F(ConvolutionTest, PaddedStridedConvolutionGivesRightResultWithPartialMask)
+{
+    Tensor<float> result(std::vector<int>{3,3});
+
+    result(0,0) = 6; result(0,1) = 17; result(0,2) = 3;
+    result(1,0) = 8; result(1,1) = 17; result(1,2) = 13;
+    result(2,0) = 6;  result(2,1) = 4;  result(2,2) = 4;
+
+    Tensor<float> output(std::vector<int>{1,3,3});
+    Tensor<float> outputMask(std::vector<int>{3,3});
+    Tensor<float> outputBuffer(output.dimensions());
+
+    outputMask.fillwith(1);
+
+    outputMask(0,0) = 0; output(0,0,0) = result(0,0);
+    outputMask(2,1) = 0; output(0,2,1) = result(2,1);
+    outputMask(2,2) = 0; output(0,2,2) = result(2,2);
+    convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 2, 1);
 
     for (int i = 0; i < 3; i++)
     {
@@ -94,6 +199,53 @@ TEST_F(ConvolutionTest, MultidimensionalSimpleConvolution) {
     Tensor<float> output(std::vector<int>{1,1,1});
 
     convolutionIm2Col(input, filter, colBuffer, output, 1, 1, 0);
+
+    ASSERT_FLOAT_EQ(output(0,0,0), 136);
+}
+
+TEST_F(ConvolutionTest, MultidimensionalSimpleConvolutionGivesRightResultWithFullMask) {
+    Tensor<float> input(std::vector<int>{3,1,1});
+
+    input(0,0,0) = 1;
+    input(1,0,0) = 7;
+    input(2,0,0) = 9;
+
+    Tensor<float> filter(std::vector<int>{1,3,1,1});
+    filter(0,0,0,0) = 5;
+    filter(0,1,0,0) = 2;
+    filter(0,2,0,0) = 13;
+
+    Tensor<float> output(std::vector<int>{1,1,1});
+    Tensor<float> outputMask(std::vector<int>{1,1});
+    Tensor<float> outputBuffer(output.dimensions());
+    outputMask(0,0) = 1;
+
+
+    convolutionIm2ColMasked(input, outputMask, filter, colBuffer, outputBuffer, output, 1, 1, 0);
+
+    ASSERT_FLOAT_EQ(output(0,0,0), 136);
+}
+
+TEST_F(ConvolutionTest, MultidimensionalSimpleConvolutionGivesRightResultWithPartialMask) {
+    Tensor<float> input(std::vector<int>{3,1,1});
+
+    input(0,0,0) = 1;
+    input(1,0,0) = 7;
+    input(2,0,0) = 9;
+
+    Tensor<float> filter(std::vector<int>{1,3,1,1});
+    filter(0,0,0,0) = 5;
+    filter(0,1,0,0) = 2;
+    filter(0,2,0,0) = 13;
+
+    Tensor<float> output(std::vector<int>{1,1,1});
+    Tensor<float> outputMask(std::vector<int>{1,1});
+    Tensor<float> outputBuffer(output.dimensions());
+    outputMask(0,0) = 0;
+    output(0,0,0) = 136;
+
+
+    convolutionIm2ColMasked(input, outputMask, filter, colBuffer, outputBuffer, output, 1, 1, 0);
 
     ASSERT_FLOAT_EQ(output(0,0,0), 136);
 }
@@ -128,7 +280,6 @@ TEST_F(ConvolutionTest, SameTransposedConvolution) {
 
 
     Tensor<float> output(std::vector<int>{1,5,5});
-
 
     transposedConvolution(delta, weights, output, 3, 1, 1);
 

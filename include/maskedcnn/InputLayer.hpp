@@ -20,6 +20,7 @@ public:
     virtual std::vector<int> getOutputDimensions() override;
 
     void setInput(const Tensor<float> input);
+    void setMask(const Tensor<float> mask);
 };
 
 }

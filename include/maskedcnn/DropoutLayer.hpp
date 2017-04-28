@@ -13,11 +13,11 @@ public:
     virtual void forwardPropagate() override;
     virtual void backwardPropagate() override;
     virtual std::vector<int> getOutputDimensions() override;
+    virtual Tensor<float> *getMask() override;
+
 
 private:
     double dropProbability;
-    Tensor<bool> dropped;
-
-};
+    Tensor<bool> dropped;};
 
 }

@@ -19,7 +19,7 @@ void DropoutLayer::forwardPropagate()
 {
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
-    std::cout << "Forward start" << name << std::endl;
+    //std::cout << "Forward start " << name << std::endl;
     auto dims = input.dimensions();
     output.resize(dims);
     dropped.resize({output.elementCount()});
@@ -81,6 +81,10 @@ std::vector<int> DropoutLayer::getOutputDimensions()
     return output.dimensions();
 }
 
+Tensor<float> *MaskedCNN::DropoutLayer::getMask()
+{
+    return bottoms[0]->getMask();
+}
 
 }
 

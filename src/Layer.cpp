@@ -2,6 +2,12 @@
 #include <random>
 #include <cmath>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+#include "DataLoader.hpp"
+
 namespace MaskedCNN
 {
 
@@ -65,6 +71,20 @@ void Layer::updateParameters()
     }
 }
 
+void Layer::displayMask()
+{
+    if (mask.dimensions().size() > 0)
+    {
+        if (!initCvWindow)
+        {
+            cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
+            initCvWindow = true;
+        }
+        cv::imshow(name, singleChannelTensorToMat(mask));
+        cv::waitKey(10);
+    }
+}
+
 const Tensor<float>* Layer::getOutput()
 {
     return &output;
@@ -75,9 +95,19 @@ Tensor<float>* Layer::getDelta()
     return &delta;
 }
 
+Tensor<float> *Layer::getMask()
+{
+    return &mask;
+}
+
 void Layer::setTrainingMode(bool isTraining)
 {
     this->isTraining = isTraining;
+}
+
+void Layer::setMaskEnabled(bool maskEnabled)
+{
+    this->maskEnabled = maskEnabled;
 }
 
 void Layer::initializeWeightsStandardDistr()

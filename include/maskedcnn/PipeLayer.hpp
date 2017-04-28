@@ -29,6 +29,12 @@ public:
     {
         return bottoms[0]->getDelta();
     }
+
+    virtual Tensor<float> *getMask() override
+    {
+        return bottoms[0]->getMask();
+    }
 };
+
 
 }

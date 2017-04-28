@@ -23,4 +23,9 @@ void InputLayer::setInput(const Tensor<float> input)
     output = input;
 }
 
+void InputLayer::setMask(const Tensor<float> mask)
+{
+    this->mask = mask;
+}
+
 }

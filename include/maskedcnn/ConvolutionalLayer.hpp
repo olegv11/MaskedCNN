@@ -25,6 +25,8 @@ protected:
     int outputWidth, outputHeight, outputChannels;
     int inputWidth, inputHeight;
     Tensor<float> colBuffer;
+    Tensor<float> outBuffer;
+    Tensor<float> maskColBuffer;
 };
 
 class ConvolutionalLayer : public BaseConvolutionalLayer

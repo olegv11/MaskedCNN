@@ -115,13 +115,8 @@ void CIFARDataLoader::loadSmallData()
     loadTrainDataSmall();
 }
 
-Tensor<float> loadImage(const std::string& path)
+Tensor<float> matToTensor(const cv::Mat& image)
 {
-    cv::Mat image = cv::imread(path, CV_LOAD_IMAGE_COLOR);
-
-    //cv::Rect rect(110, 70, 150, 150);
-    //cv::Mat cropped = image(rect);
-
     cv::Mat BGR[3];
     cv::split(image, BGR);
 
@@ -140,7 +135,34 @@ Tensor<float> loadImage(const std::string& path)
     return result;
 }
 
+cv::Mat singleChannelTensorToMat(const Tensor<float>& tensor)
+{
+    cv::Mat image(tensor.columnLength(), tensor.rowLength(), CV_8UC1);
 
+    for (int y = 0; y < image.rows; y++)
+    {
+        for (int x = 0; x < image.cols; x++)
+        {
+            if (tensor(y,x) > 0)
+            {
+                image.at<unsigned char>(y,x) = 255;
+            }
+            else
+            {
+                image.at<unsigned char>(y,x) = 0;
+            }
 
+        }
+    }
+
+    return image;
+}
+
+Tensor<float> loadImage(const std::string& path)
+{
+    cv::Mat image = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+
+    return matToTensor(image);
+}
 
 }

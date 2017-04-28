@@ -54,7 +54,7 @@ public:
 
     bool sameShape(const Tensor& other) const;
 
-    void reshape(const std::vector<int> &dimensions);
+    void reshape(const std::vector<int> &dimensions) const;
     void reshape(int rowLength, int columnLength, int channelLength);
     void resize(const std::vector<int> &dimensions);
     void flatten();
@@ -78,7 +78,7 @@ public:
     std::string toString() const;
 
 private:
-    std::vector<int> dims;
+    mutable std::vector<int> dims;
     T *data;
     bool isShallow;
 };
@@ -282,7 +282,7 @@ bool Tensor<T>::sameShape(const Tensor &other) const
 }
 
 template<typename T>
-void Tensor<T>::reshape(const std::vector<int> &dimensions)
+void Tensor<T>::reshape(const std::vector<int> &dimensions) const
 {
     int newElementCount = multiplyAllElements(dimensions);
     if (newElementCount != elementCount())

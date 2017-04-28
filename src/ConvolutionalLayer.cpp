@@ -75,7 +75,7 @@ DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activatio
 
 void ConvolutionalLayer::forwardPropagate()
 {
-    std::cout << "Forward start " << name << std::endl;
+    //std::cout << "Forward start " << name << std::endl;
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
     if (!initDone)
@@ -98,13 +98,23 @@ void ConvolutionalLayer::forwardPropagate()
         dy_dz.resize({outputChannels, outputHeight, outputWidth});
         delta.resize({outputChannels, outputHeight, outputWidth});
         output.resize({outputChannels, outputHeight, outputWidth});
-
-        std::vector<int> colBufferShape;
+        mask.resize({outputHeight, outputWidth});
 
         initDone = true;
     }
 
-    convolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
+
+    if (maskEnabled)
+    {
+        const Tensor<float> &prevMask = *bottoms[0]->getMask();
+        convolveMaskIm2Col(prevMask, mask, maskColBuffer, filterSize, stride, pad);
+        convolutionIm2ColMasked(input, mask, weights, colBuffer, outBuffer, z, filterSize, stride, pad);
+    }
+    else
+    {
+        convolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
+    }
+
     for (int d = 0; d < outputChannels; d++)
     {
         for (int ay = 0; ay < outputHeight; ay++)
@@ -121,7 +131,7 @@ void ConvolutionalLayer::forwardPropagate()
 
 void DeconvolutionalLayer::forwardPropagate()
 {
-    std::cout << "Forward start " << name << std::endl;
+    //std::cout << "Forward start " << name << std::endl;
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
     if (!initDone)

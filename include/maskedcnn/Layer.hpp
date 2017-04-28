@@ -23,8 +23,10 @@ public:
 
     virtual const Tensor<float> *getOutput();
     virtual Tensor<float> *getDelta();
+    virtual Tensor<float> *getMask();
 
     void setTrainingMode(bool isTraining);
+    void setMaskEnabled(bool maskEnabled);
 
     void initializeWeightsStandardDistr();
     void initializeWeightsNormalDistrCorrectedVar();
@@ -35,6 +37,7 @@ public:
     void setAdaGrad(float learningRate, float l2Reg, int numBatch, int numData);
 
     void updateParameters();
+    void displayMask();
 
 protected:
     std::string name;
@@ -47,9 +50,14 @@ protected:
     Tensor<float> delta; //dE/dz
     Tensor<float> dy_dz;
 
+    Tensor<float> mask;
+
     int miniBatchSize;
     bool isTraining;
     bool initDone;
+    bool maskEnabled = false;
+
+    bool initCvWindow = false;
 
     std::unique_ptr<TrainingRegime> trainer;
     std::vector<Layer*> bottoms;

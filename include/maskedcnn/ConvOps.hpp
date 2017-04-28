@@ -51,7 +51,6 @@ void convolution(const Tensor<float>& input, const Tensor<float>& filter, Tensor
     }
 }
 
-
 void transposedConvolution(const Tensor<float>& input, const Tensor<float>& filter, Tensor<float>& out, int filterSize, int stride, int pad)
 {
     // Doing transposed convolution here
@@ -122,18 +121,18 @@ void im2col(const Tensor<float>& im, int inputChannels, int inputHeight, int inp
     const int outputWidth = (inputWidth + 2 * pad - filterSize) / stride + 1;
     const int channelSize = inputHeight * inputWidth;
 
-    for (int channel = inputChannels; channel--; dataIm += channelSize)
+    for (int channel = 0; channel < inputChannels; dataIm += channelSize, channel++)
     {
         for (int fy = 0; fy < filterSize; fy++)
         {
             for (int fx = 0; fx < filterSize; fx++)
             {
                 int y = -pad + fy;
-                for (int outputRows = outputHeight; outputRows; outputRows--)
+                for (int outputRows = 0; outputRows < outputHeight; outputRows++)
                 {
                     if (y < 0 || y >= inputHeight)
                     {
-                        for (int outputCols = outputWidth; outputCols; outputCols--)
+                        for (int outputCols = 0; outputCols < outputWidth; outputCols++)
                         {
                             *(dataCol++) = 0;
                         }
@@ -141,7 +140,7 @@ void im2col(const Tensor<float>& im, int inputChannels, int inputHeight, int inp
                     else
                     {
                         int x = -pad + fx;
-                        for (int outputCols = outputWidth; outputCols; outputCols--)
+                        for (int outputCols = 0; outputCols < outputWidth; outputCols++)
                         {
                             if (x >= 0 && x < inputWidth)
                             {
@@ -161,19 +160,81 @@ void im2col(const Tensor<float>& im, int inputChannels, int inputHeight, int inp
     }
 }
 
-void col2im(const Tensor<float>& col, int filterSize, int pad, int stride, Tensor<float>& data)
+int im2colMasked(const Tensor<float>& im, const Tensor<float>& mask, int inputChannels, int inputHeight, int inputWidth, int filterSize, int pad, int stride, Tensor<float>& col)
 {
-    data.zero();
-
     auto dataCol = col.dataAddress();
-    auto dataIm = data.dataAddress();
-    const int inputHeight = data.dimensions()[1];
-    const int inputWidth = data.dimensions()[2];
+    auto dataIm = im.dataAddress();
+    auto dataMask = mask.dataAddress();
     const int outputHeight = (inputHeight + 2 * pad - filterSize) / stride + 1;
     const int outputWidth = (inputWidth + 2 * pad - filterSize) / stride + 1;
     const int channelSize = inputHeight * inputWidth;
 
-    for (int channel = channelSize; channel--; dataIm += channelSize)
+    int patchesToProcess = 0;
+
+    for (int channel = 0; channel < inputChannels; dataIm += channelSize, channel++)
+    {
+        for (int fy = 0; fy < filterSize; fy++)
+        {
+            for (int fx = 0; fx < filterSize; fx++)
+            {
+                int y = -pad + fy;
+                for (int outputRows = 0; outputRows < outputHeight; outputRows++)
+                {
+                    if (y < 0 || y >= inputHeight)
+                    {
+                        for (int outputCols = 0; outputCols < outputWidth; outputCols++)
+                        {
+                            if (dataMask[outputRows * outputWidth + outputCols] > 0)
+                            {
+                                patchesToProcess++;
+                                *(dataCol++) = 0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int x = -pad + fx;
+                        for (int outputCols = 0; outputCols < outputWidth; outputCols++)
+                        {
+                            // Most important part: just skip if we don't need
+                            // to compute (outputRows, outputCols)
+                            if (dataMask[outputRows * outputWidth + outputCols] > 0)
+                            {
+                                patchesToProcess++;
+                                if (x >= 0 && x < inputWidth)
+                                {
+                                    *(dataCol++) = dataIm[y * inputWidth + x];
+                                }
+                                else
+                                {
+                                    *(dataCol++) = 0;
+                                }
+                            }
+
+                            x += stride;
+                        }
+                    }
+                    y += stride;
+                }
+            }
+        }
+    }
+
+    assert(patchesToProcess % inputChannels * filterSize * filterSize == 0);
+    return patchesToProcess / (inputChannels * filterSize * filterSize);
+}
+
+void col2im(const Tensor<float>& col, int inputChannels, int inputHeight, int inputWidth, int filterSize, int pad, int stride, Tensor<float>& im)
+{
+    im.zero();
+
+    auto dataCol = col.dataAddress();
+    auto dataIm = im.dataAddress();
+    const int outputHeight = (inputHeight + 2 * pad - filterSize) / stride + 1;
+    const int outputWidth = (inputWidth + 2 * pad - filterSize) / stride + 1;
+    const int channelSize = inputHeight * inputWidth;
+
+    for (int channel = inputChannels; channel--; dataIm += channelSize)
     {
         for (int fy = 0; fy < filterSize; fy++)
         {
@@ -227,6 +288,98 @@ void convolutionIm2Col(const Tensor<float>& input, const Tensor<float>& filter, 
                 1.0, filter.dataAddress(), k, colBuffer.dataAddress(),
                 n, 0., out.dataAddress(), n);
 }
+
+void transposedConvolutionIm2Col(const Tensor<float>& input, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float>& out, int filterSize, int stride, int pad)
+{
+    const int outputChannels = out.dimensions()[0];
+    const int outputHeight = out.dimensions()[1];
+    const int outputWidth = out.dimensions()[2];
+    const int inputChannels = input.dimensions()[0];
+    const int inputHeight = input.dimensions()[1];
+    const int inputWidth = input.dimensions()[2];
+
+    colBuffer.resize(std::vector<int>{outputChannels*filterSize*filterSize, inputHeight * inputWidth});
+
+    int m = inputChannels;
+    int n = inputHeight * inputWidth;
+    int k = outputChannels * filterSize * filterSize;
+
+    cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, n, k,
+                1.0, filter.dataAddress(), m, input.dataAddress(),
+                n, 0., colBuffer.dataAddress(), n);
+
+    col2im(colBuffer, inputChannels, outputHeight, outputWidth, filterSize, pad, stride, out);
+}
+
+void convolutionIm2ColMasked(const Tensor<float>& input, const Tensor<float>& mask, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float> &outBuffer, Tensor<float>& out, int filterSize, int stride, int pad)
+{
+    const int outputChannels = out.dimensions()[0];
+    const int outputHeight = out.dimensions()[1];
+    const int outputWidth = out.dimensions()[2];
+    const int inputChannels = input.dimensions()[0];
+    const int inputHeight = input.dimensions()[1];
+    const int inputWidth = input.dimensions()[2];
+
+    // Always allocate for the worst case (have to process everything)
+    colBuffer.resize(std::vector<int>{inputChannels*filterSize*filterSize, outputHeight * outputWidth});
+    outBuffer.resize(out.dimensions());
+
+    int patches = im2colMasked(input, mask, inputChannels, inputHeight, inputWidth, filterSize, pad, stride, colBuffer);
+
+    int m = outputChannels;
+    int n = patches;
+    int k = inputChannels * filterSize * filterSize;
+
+    auto outBufferData = outBuffer.dataAddress();
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k,
+                1.0, filter.dataAddress(), k, colBuffer.dataAddress(),
+                n, 0., outBufferData, n);
+
+    const auto& maskData = mask.dataAddress();
+    const auto& outData = out.dataAddress();
+
+    for (int c = 0; c < outputChannels; c++)
+    {
+        for (int y = 0; y < outputHeight; y++)
+        {
+            for (int x = 0; x < outputWidth; x++)
+            {
+                if (maskData[y * outputWidth + x] > 0)
+                {
+                    int index = x + outputWidth * (y + outputHeight * c);
+                    outData[index] = *outBufferData;
+                    outBufferData++;
+                }
+            }
+        }
+    }
+
+
+}
+
+
+
+void convolveMaskIm2Col(const Tensor<float>& prevMask, Tensor<float>& mask, Tensor<float>& colBuffer, int filterSize, int stride, int pad)
+{
+    const int outputHeight = mask.dimensions()[0];
+    const int outputWidth = mask.dimensions()[1];
+    const int inputHeight = prevMask.dimensions()[0];
+    const int inputWidth = prevMask.dimensions()[1];
+
+    mask.zero();
+
+    Tensor<float> weights(std::vector<int>{1,1,filterSize,filterSize});
+    weights.fillwith(1.0);
+
+    const Tensor<float> deepPrevMask(prevMask, shallow_copy{});
+    deepPrevMask.reshape(std::vector<int>{1, inputHeight, inputWidth});
+
+    Tensor<float> deepMask(mask, shallow_copy{});
+    deepMask.reshape(std::vector<int>{1, outputHeight, outputWidth});
+
+    convolutionIm2Col(deepPrevMask, weights, colBuffer, deepMask, filterSize, stride, pad);
+}
+
 
 
 }
