@@ -261,7 +261,7 @@ TEST_F(ConvolutionTest, SimpleTransposedConvolution) {
     Tensor<float> output(std::vector<int>{1,5,5});
 
 
-    transposedConvolution(delta, weights, output, 3, 1, 0);
+    transposedConvolutionIm2Col(delta, weights, colBuffer, output, 3, 1, 0);
 
     for (int i = 0; i < 5; i++)
     {
@@ -279,9 +279,9 @@ TEST_F(ConvolutionTest, SameTransposedConvolution) {
     result(2,0) = 50; result(2,1) = 94; result(2,2) = 70;
 
 
-    Tensor<float> output(std::vector<int>{1,5,5});
+    Tensor<float> output(std::vector<int>{1,3,3});
 
-    transposedConvolution(delta, weights, output, 3, 1, 1);
+    transposedConvolutionIm2Col(delta, weights, colBuffer, output, 3, 1, 1);
 
     for (int i = 0; i < 3; i++)
     {
@@ -299,7 +299,7 @@ TEST_F(ConvolutionTest, FullPaddingTransposedConvolution) {
     input(0,0,0) = 10; input(0,0,1) = 2;
     input(0,1,0) = 3;  input(0,1,1) = 7;
 
-    transposedConvolution(input, weights, output, 3, 2, 2);
+    transposedConvolutionIm2Col(input, weights, colBuffer, output, 3, 2, 2);
 
     ASSERT_FLOAT_EQ(output(0,0,0), 26);
 }
@@ -335,7 +335,7 @@ TEST_F(ConvolutionTest, MultiChannelConvolution)
     result(0,3,0) = 63; result(0,3,1) = 112; result(0,3,2) = 186; result(0,3,3) = 110; result(0,3,4) = 63;
     result(0,4,0) = 21; result(0,4,1) = 32; result(0,4,2) = 94; result(0,4,3) = 83; result(0,4,4) = 80;
 
-    transposedConvolution(input, weights, output, 3, 1, 0);
+    transposedConvolutionIm2Col(input, weights, colBuffer, output, 3, 1, 0);
 
     for (int i = 0; i < 5; i++)
     {
@@ -376,7 +376,7 @@ TEST_F(ConvolutionTest, BigConvolution)
     result(0,7,0) = 2; result(0,7,1) = 18; result(0,7,2) = 39; result(0,7,3) = 39; result(0,7,4) = 21; result(0,7,5) = 8; result(0,7,6) = 15; result(0,7,7) = 19; result(0,7,8) = 7;
     result(0,8,0) = 0; result(0,8,1) = 1; result(0,8,2) = 9; result(0,8,3) = 16; result(0,8,4) = 15; result(0,8,5) = 7; result(0,8,6) = 0; result(0,8,7) = 3; result(0,8,8) = 3;
 
-    transposedConvolution(input, weights, output, 3, 1, 0);
+    transposedConvolutionIm2Col(input, weights, colBuffer, output, 3, 1, 0);
 
     for (int i = 0; i < 9; i++)
     {
@@ -419,7 +419,7 @@ TEST_F(ConvolutionTest, BigStridedConvolution)
     result(0,13,0) = 14; result(0,13,1) = 14; result(0,13,2) = 0; result(0,13,3) = 0; result(0,13,4) = 0; result(0,13,5) = 0; result(0,13,6) = 16; result(0,13,7) = 16; result(0,13,8) = 0; result(0,13,9) = 0; result(0,13,10) = 0; result(0,13,11) = 0; result(0,13,12) = 18; result(0,13,13) = 18; result(0,13,14) = 0;
     result(0,14,0) = 0; result(0,14,1) = 7; result(0,14,2) = 7; result(0,14,3) = 0; result(0,14,4) = 0; result(0,14,5) = 0; result(0,14,6) = 0; result(0,14,7) = 8; result(0,14,8) = 8; result(0,14,9) = 0; result(0,14,10) = 0; result(0,14,11) = 0; result(0,14,12) = 0; result(0,14,13) = 9; result(0,14,14) = 9;
 
-    transposedConvolution(input, weights, output, 3, 6, 0);
+    transposedConvolutionIm2Col(input, weights, colBuffer, output, 3, 6, 0);
 
     for (int i = 0; i < 15; i++)
     {

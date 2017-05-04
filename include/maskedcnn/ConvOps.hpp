@@ -240,7 +240,7 @@ void col2im(const Tensor<float>& col, int inputChannels, int inputHeight, int in
         {
             for (int fx = 0; fx < filterSize; fx++)
             {
-                int y = -pad;
+                int y = -pad + fy;
                 for (int outputRows = outputHeight; outputRows; outputRows--)
                 {
                     if (y < 0 || y >= inputHeight)
@@ -249,7 +249,7 @@ void col2im(const Tensor<float>& col, int inputChannels, int inputHeight, int in
                     }
                     else
                     {
-                        int x = -pad;
+                        int x = -pad + fx;
                         for (int outputCols = outputWidth; outputCols; outputCols--)
                         {
                             if (x >= 0 && x < inputWidth)
@@ -300,15 +300,15 @@ void transposedConvolutionIm2Col(const Tensor<float>& input, const Tensor<float>
 
     colBuffer.resize(std::vector<int>{outputChannels*filterSize*filterSize, inputHeight * inputWidth});
 
-    int m = inputChannels;
+    int m = outputChannels * filterSize * filterSize;
     int n = inputHeight * inputWidth;
-    int k = outputChannels * filterSize * filterSize;
+    int k = inputChannels;
 
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, n, k,
                 1.0, filter.dataAddress(), m, input.dataAddress(),
                 n, 0., colBuffer.dataAddress(), n);
 
-    col2im(colBuffer, inputChannels, outputHeight, outputWidth, filterSize, pad, stride, out);
+    col2im(colBuffer, outputChannels, outputHeight, outputWidth, filterSize, pad, stride, out);
 }
 
 void convolutionIm2ColMasked(const Tensor<float>& input, const Tensor<float>& mask, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float> &outBuffer, Tensor<float>& out, int filterSize, int stride, int pad)
