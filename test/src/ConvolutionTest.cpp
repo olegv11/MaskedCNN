@@ -75,6 +75,8 @@ TEST_F(ConvolutionTest, SimpleMaskedConvolutionGivesRightResultWithFullMask)
 
     outputMask.fillwith(1);
     convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 1, 0);
+    convolutionIm2ColMaskedPlaceBufferBack(outputMask, outputBuffer, output);
+
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -101,6 +103,7 @@ TEST_F(ConvolutionTest, SimpleMaskedConvolutionGivesRightResultWithPartialMask)
     outputMask(1,1) = 0; output(0,1,1) = 17;
     outputMask(1,2) = 0; output(0,1,2) = 19;
     convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 1, 0);
+    convolutionIm2ColMaskedPlaceBufferBack(outputMask, outputBuffer, output);
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -146,6 +149,7 @@ TEST_F(ConvolutionTest, PaddedStridedConvolutionGivesRightResultWithFullMask)
 
 
     convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 2, 1);
+    convolutionIm2ColMaskedPlaceBufferBack(outputMask, outputBuffer, output);
 
     for (int i = 0; i < 3; i++)
     {
@@ -170,10 +174,11 @@ TEST_F(ConvolutionTest, PaddedStridedConvolutionGivesRightResultWithPartialMask)
 
     outputMask.fillwith(1);
 
-    outputMask(0,0) = 0; output(0,0,0) = result(0,0);
-    outputMask(2,1) = 0; output(0,2,1) = result(2,1);
-    outputMask(2,2) = 0; output(0,2,2) = result(2,2);
+    //outputMask(0,0) = 0; output(0,0,0) = result(0,0);
+    //outputMask(0,1) = 0; output(0,0,1) = result(0,1);
+    outputMask(1,2) = 0; output(0,1,2) = result(1,2);
     convolutionIm2ColMasked(matrix, outputMask, weights, colBuffer, outputBuffer, output, 3, 2, 1);
+    convolutionIm2ColMaskedPlaceBufferBack(outputMask, outputBuffer, output);
 
     for (int i = 0; i < 3; i++)
     {
@@ -222,6 +227,7 @@ TEST_F(ConvolutionTest, MultidimensionalSimpleConvolutionGivesRightResultWithFul
 
 
     convolutionIm2ColMasked(input, outputMask, filter, colBuffer, outputBuffer, output, 1, 1, 0);
+    convolutionIm2ColMaskedPlaceBufferBack(outputMask, outputBuffer, output);
 
     ASSERT_FLOAT_EQ(output(0,0,0), 136);
 }
@@ -246,6 +252,7 @@ TEST_F(ConvolutionTest, MultidimensionalSimpleConvolutionGivesRightResultWithPar
 
 
     convolutionIm2ColMasked(input, outputMask, filter, colBuffer, outputBuffer, output, 1, 1, 0);
+    convolutionIm2ColMaskedPlaceBufferBack(outputMask, outputBuffer, output);
 
     ASSERT_FLOAT_EQ(output(0,0,0), 136);
 }
@@ -429,6 +436,7 @@ TEST_F(ConvolutionTest, BigStridedConvolution)
         }
     }
 }
+
 
 }  // namespace
 

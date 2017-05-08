@@ -16,7 +16,6 @@ SoftmaxLayer::SoftmaxLayer(int numClasses)
 void SoftmaxLayer::forwardPropagate()
 {
     const Tensor<float> &input = *bottoms[0]->getOutput();
-    std::cout << "Forward start" << name << std::endl;
     assert(input.dimensions() == std::vector<int>{numClasses});
     softmax(&input[0], &output[0], numClasses);
 }

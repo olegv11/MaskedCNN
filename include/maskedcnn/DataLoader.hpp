@@ -7,10 +7,6 @@
 namespace MaskedCNN
 {
 
-Tensor<float> loadImage(const std::string& path);
-Tensor<float> matToTensor(const cv::Mat& image);
-cv::Mat singleChannelTensorToMat(const Tensor<float> &tensor);
-
 class CIFARDataLoader
 {
 public:

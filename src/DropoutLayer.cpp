@@ -19,7 +19,6 @@ void DropoutLayer::forwardPropagate()
 {
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
-    //std::cout << "Forward start " << name << std::endl;
     auto dims = input.dimensions();
     output.resize(dims);
     dropped.resize({output.elementCount()});

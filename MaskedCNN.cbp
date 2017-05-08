@@ -5,113 +5,193 @@
 		<Option title="MaskedCNN"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\share\;CMake Files\..\..\..\..\..\usr\share\OpenCV\;CMake Files\test\;CMake Files\test\gtest\;CMake Files\test\gtest\tmp\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\share\;CMake Files\..\..\..\..\..\usr\share\OpenCV\;CMake Files\test\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="rebuild_cache">
+			<Target title="install/strip">
 				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="maskedcnnexe">
+				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/maskedcnnexe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/opencv"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 maskedcnnexe"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="maskedcnnexe/fast">
+				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/maskedcnnexe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/opencv"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 maskedcnnexe/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="maskedcnn">
+				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/libmaskedcnn.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/opencv"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 maskedcnn"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="maskedcnn/fast">
+				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/libmaskedcnn.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/opencv"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 maskedcnn/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
 				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="libmaskedcnn">
-				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/liblibmaskedcnn.a" prefix_auto="0" extension_auto="0"/>
+			<Target title="rebuild_cache">
 				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
-				<Option object_output="./"/>
-				<Option type="2"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/include/opencv"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
-				</Compiler>
+				<Option type="4"/>
 				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 libmaskedcnn"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="libmaskedcnn/fast">
-				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/liblibmaskedcnn.a" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN"/>
-				<Option object_output="./"/>
-				<Option type="2"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/include/opencv"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 libmaskedcnn/fast"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="maskedcnn">
-				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin/maskedcnn" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/include/opencv"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 maskedcnn"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="maskedcnn/fast">
-				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin/maskedcnn" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/include/opencv"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 maskedcnn/fast"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="testmaskedcnn">
-				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin/testmaskedcnn" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin"/>
+				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/testmaskedcnn" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/test"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -119,19 +199,27 @@
 					<Add directory="/usr/include/opencv"/>
 					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/gtest/src/gtest/googletest/include"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/gtest/src/gtest/googlemock/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 testmaskedcnn"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 testmaskedcnn"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="testmaskedcnn/fast">
-				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin/testmaskedcnn" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/bin"/>
+				<Option output="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/testmaskedcnn" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/test"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -139,124 +227,176 @@
 					<Add directory="/usr/include/opencv"/>
 					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/gtest/src/gtest/googletest/include"/>
-					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/gtest/src/gtest/googlemock/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 testmaskedcnn/fast"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="gtest">
-				<Option working_dir="/home/oleg/Deep_learning/Thesis/MaskedCNN/test"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 gtest"/>
-					<CompileFile command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command=" -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 testmaskedcnn/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/oleg/Deep_learning/Thesis/MaskedCNN/test/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Activation.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/ConvOps.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/ConvolutionalLayer.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/DataLoader.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/DropoutLayer.hpp">
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/EltwiseLayer.hpp">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/FullyConnectedLayer.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/InputLayer.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Layer.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/LayerLoader.hpp">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Network.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/PipeLayer.hpp">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/PoolLayer.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/SoftmaxLayer.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Tensor.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Training.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/TrainingRegime.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Util.hpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/Visuals.hpp">
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn/caffe.pb.h">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/Activation.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/ConvOps.cpp">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/ConvolutionalLayer.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/DataLoader.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/DropoutLayer.cpp">
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/EltwiseLayer.cpp">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/FullyConnectedLayer.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/InputLayer.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/Layer.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/LayerLoader.cpp">
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/Main.cpp">
+			<Option target="maskedcnnexe"/>
+		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/Network.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/PoolLayer.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/SoftmaxLayer.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/Training.cpp">
-			<Option target="libmaskedcnn"/>
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/Visuals.cpp">
+			<Option target="maskedcnnexe"/>
+			<Option target="maskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/src/caffe.pb.cc">
+			<Option target="maskedcnnexe"/>
 			<Option target="maskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp">
+			<Option target="testmaskedcnn"/>
+		</Unit>
+		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp">
 			<Option target="testmaskedcnn"/>
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeLists.txt">
@@ -276,9 +416,6 @@
 		</Unit>
 		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\test\"/>
-		</Unit>
-		<Unit filename="/home/oleg/Deep_learning/Thesis/MaskedCNN/test/gtest/tmp/gtest-cfgcmd.txt.in">
-			<Option virtualFolder="CMake Files\test\gtest\tmp\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

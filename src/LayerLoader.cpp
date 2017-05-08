@@ -43,7 +43,6 @@ std::vector<std::unique_ptr<Layer>> loadCaffeNet(std::string path, int width, in
             const auto& weights = p.blobs(0);
             const auto& param = p.convolution_param();
 
-            std::cerr << name << " loaded";
             int oc = weights.shape().dim(0);
             int ic = weights.shape().dim(1);
             int kh = weights.shape().dim(2);
@@ -64,19 +63,6 @@ std::vector<std::unique_ptr<Layer>> loadCaffeNet(std::string path, int width, in
                                     weights.data(col + kw * (row + kh * (inputChannel + ic * outputChannel)));
                         }
                     }
-                }
-            }
-
-            std::cout << std::endl;
-            if (p.type() == "Deconvolution")
-            {
-                for (int y = 32; y < 37; y++)
-                {
-                    for (int x = 11; x < 16; x++)
-                    {
-                        std::cout << weightTensor(15,15,y,x) << " ";
-                    }
-                    std::cout << std::endl;
                 }
             }
 

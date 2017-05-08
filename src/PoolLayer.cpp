@@ -13,7 +13,6 @@ void PoolLayer::forwardPropagate()
     const Tensor<float> &input = *bottoms[0]->getOutput();
     const Tensor<float> &prevMask = *bottoms[0]->getMask();
 
-    //std::cout << "Forward start " << name << std::endl;
 
     if (!initDone)
     {

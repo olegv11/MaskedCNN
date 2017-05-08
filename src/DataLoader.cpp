@@ -1,4 +1,5 @@
 #include "DataLoader.hpp"
+#include "Visuals.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -115,54 +116,6 @@ void CIFARDataLoader::loadSmallData()
     loadTrainDataSmall();
 }
 
-Tensor<float> matToTensor(const cv::Mat& image)
-{
-    cv::Mat BGR[3];
-    cv::split(image, BGR);
 
-    Tensor<float> result(std::vector<int>({3, image.rows, image.cols}));
-
-    for (int y = 0; y < image.rows; y++)
-    {
-        for (int x = 0; x < image.cols; x++)
-        {
-            result(0, y, x) = BGR[0].at<uchar>(y,x);
-            result(1, y, x) = BGR[1].at<uchar>(y,x);
-            result(2, y, x) = BGR[2].at<uchar>(y,x);
-        }
-    }
-
-    return result;
-}
-
-cv::Mat singleChannelTensorToMat(const Tensor<float>& tensor)
-{
-    cv::Mat image(tensor.columnLength(), tensor.rowLength(), CV_8UC1);
-
-    for (int y = 0; y < image.rows; y++)
-    {
-        for (int x = 0; x < image.cols; x++)
-        {
-            if (tensor(y,x) > 0)
-            {
-                image.at<unsigned char>(y,x) = 255;
-            }
-            else
-            {
-                image.at<unsigned char>(y,x) = 0;
-            }
-
-        }
-    }
-
-    return image;
-}
-
-Tensor<float> loadImage(const std::string& path)
-{
-    cv::Mat image = cv::imread(path, CV_LOAD_IMAGE_COLOR);
-
-    return matToTensor(image);
-}
 
 }

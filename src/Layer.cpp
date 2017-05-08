@@ -1,12 +1,13 @@
 #include "Layer.hpp"
 #include <random>
 #include <cmath>
+#include <fstream>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "DataLoader.hpp"
+#include "Visuals.hpp"
 
 namespace MaskedCNN
 {
@@ -71,18 +72,11 @@ void Layer::updateParameters()
     }
 }
 
-void Layer::displayMask()
+std::pair<std::string, cv::Mat> Layer::displayMask()
 {
-    if (mask.dimensions().size() > 0)
-    {
-        if (!initCvWindow)
-        {
-            cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
-            initCvWindow = true;
-        }
-        cv::imshow(name, singleChannelTensorToMat(mask));
-        cv::waitKey(10);
-    }
+    getMask();
+
+    return std::make_pair(name, maskToMat(mask));
 }
 
 const Tensor<float>* Layer::getOutput()
@@ -97,6 +91,10 @@ Tensor<float>* Layer::getDelta()
 
 Tensor<float> *Layer::getMask()
 {
+    if (!maskEnabled)
+    {
+        mask.fillwith(1.0);
+    }
     return &mask;
 }
 

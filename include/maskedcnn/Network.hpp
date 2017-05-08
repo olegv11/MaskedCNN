@@ -10,8 +10,15 @@
 #include "TrainingRegime.hpp"
 #include "DataLoader.hpp"
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/photo/photo.hpp>
+
+
 
 #include <vector>
+#include <sys/times.h>
 
 namespace MaskedCNN
 {
@@ -19,13 +26,29 @@ namespace MaskedCNN
 class Network
 {
 public:
-    Network();
+    Network(std::string modelPath, int threshold);
+    void setDisplayMask(int i, bool display);
+    void setDisplayMask(std::string name, bool display);
+    void setMaskEnabled(bool enabled);
+    std::vector<std::pair<std::string, cv::Mat>> forward(const cv::Mat input);
+    std::vector<std::string> layerNames() const;
+
+    long forwardTime() const;
 
 private:
-    std::vector<Layer> layers;
+    std::vector<std::unique_ptr<Layer>> layers;
+    std::vector<bool> displayMaskSwitch;
+    bool maskEnabled;
+
+    cv::Mat currentFrame;
+    cv::Mat prevFrame;
+    bool initDone;
+    bool maskInitDone;
+
+    tms beginTime;
+    tms endTime;
+
+    int threshold;
 };
 
 }
-
-void createNetwork(int miniBatchSize, int exampleCount);
-void train(MaskedCNN::CIFARDataLoader &loader, int miniBatchSize);

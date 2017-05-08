@@ -31,6 +31,8 @@ public:
     Tensor<T>& operator=(Tensor<T>&& other) noexcept;
     ~Tensor();
 
+    bool operator==(const Tensor<T>& other) const;
+
     int rowLength() const { return dims[dimensionCount() - 1]; }
     int columnLength() const { return dims[dimensionCount() - 2]; }
     int channelLength() const { return dims[dimensionCount() - 3]; }
@@ -171,7 +173,7 @@ Tensor<T>& Tensor<T>::operator=(const Tensor<T>& other)
 template<typename T>
 Tensor<T>& Tensor<T>::operator=(Tensor<T>&& other) noexcept
 {
-    dims = std::move(other.data);
+    dims = std::move(other.dims);
     data = std::move(other.data);
 
     isShallow = other.isShallow;
@@ -187,6 +189,24 @@ Tensor<T>::~Tensor()
     {
         delete[] data;
     }
+}
+
+template<typename T>
+bool Tensor<T>::operator==(const Tensor<T> &other) const
+{
+    if (&other == this) return true;
+    if (dims != other.dims) return false;
+
+    int els = elementCount();
+    for (int i = 0; i < els; i++)
+    {
+        if (data[i] != other.data[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 template<typename T>

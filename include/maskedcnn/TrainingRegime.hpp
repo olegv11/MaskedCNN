@@ -100,7 +100,7 @@ protected:
         memset(partialdb.data(), 0, numb * sizeof(float));
     }
 
-    virtual void initEnded()
+    virtual void initEnded() override
     {
         prevStepW.resize(numw);
         prevStepB.resize(numb);
@@ -144,7 +144,7 @@ public:
     }
 
 protected:
-    virtual void initEnded()
+    virtual void initEnded() override
     {
         sumGradW.resize(numw);
         sumGradB.resize(numb);
@@ -188,7 +188,7 @@ public:
 
 
 protected:
-    virtual void initEnded()
+    virtual void initEnded() override
     {
         runningAverageW.resize(numw);
         runningAverageB.resize(numb);

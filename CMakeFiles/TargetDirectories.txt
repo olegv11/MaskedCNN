@@ -1,0 +1,15 @@
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/install/strip.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/install/local.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/install.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/list_install_components.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/maskedcnnexe.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/maskedcnn.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/edit_cache.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles/rebuild_cache.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/install/strip.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/install/local.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/edit_cache.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/testmaskedcnn.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/rebuild_cache.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/install.dir
+/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/list_install_components.dir

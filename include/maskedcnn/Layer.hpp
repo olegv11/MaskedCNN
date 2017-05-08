@@ -4,6 +4,7 @@
 #include <string>
 #include "Tensor.hpp"
 #include "TrainingRegime.hpp"
+#include <opencv2/core/core.hpp>
 namespace MaskedCNN
 {
 
@@ -37,7 +38,7 @@ public:
     void setAdaGrad(float learningRate, float l2Reg, int numBatch, int numData);
 
     void updateParameters();
-    void displayMask();
+    std::pair<std::string, cv::Mat> displayMask();
 
 protected:
     std::string name;

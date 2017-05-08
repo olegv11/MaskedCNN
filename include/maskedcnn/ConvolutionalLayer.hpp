@@ -38,6 +38,9 @@ public:
                            Tensor<float>&& biases, int stride, int pad, std::string name = "");
     virtual void forwardPropagate() override;
     virtual void backwardPropagate() override;
+
+private:
+    void activateOutBuffer();
 };
 
 class DeconvolutionalLayer : public BaseConvolutionalLayer

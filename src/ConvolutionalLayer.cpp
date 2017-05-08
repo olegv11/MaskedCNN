@@ -21,7 +21,6 @@ BaseConvolutionalLayer::BaseConvolutionalLayer(std::unique_ptr<Activation> activ
                                                int stride, int pad, std::string name)
     :Layer(std::move(weights), std::move(biases), name), activation(std::move(activation)), pad(pad), stride(stride)
 {
-    std::cout << name;
     auto dims = this->weights.dimensions();
 
     assert(dims.size() == 4);
@@ -75,7 +74,6 @@ DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activatio
 
 void ConvolutionalLayer::forwardPropagate()
 {
-    //std::cout << "Forward start " << name << std::endl;
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
     if (!initDone)
@@ -109,19 +107,51 @@ void ConvolutionalLayer::forwardPropagate()
         const Tensor<float> &prevMask = *bottoms[0]->getMask();
         convolveMaskIm2Col(prevMask, mask, maskColBuffer, filterSize, stride, pad);
         convolutionIm2ColMasked(input, mask, weights, colBuffer, outBuffer, z, filterSize, stride, pad);
+
+        activateOutBuffer();
+
+        activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
+
     }
     else
     {
         convolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
+
+        for (int d = 0; d < outputChannels; d++)
+        {
+            for (int ay = 0; ay < outputHeight; ay++)
+            {
+                for (int ax = 0; ax < outputWidth; ax++)
+                {
+                    z(d, ay, ax) += biases[d];
+                }
+            }
+        }
+
+        activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());
     }
+
+}
+
+void ConvolutionalLayer::activateOutBuffer()
+{
+    auto outBufferData = outBuffer.dataAddress();
+    auto outputData = z.dataAddress();
+    const auto& maskData = mask.dataAddress();
 
     for (int d = 0; d < outputChannels; d++)
     {
-        for (int ay = 0; ay < outputHeight; ay++)
+        float bias = biases[d];
+        for (int y = 0; y < outputHeight; y++)
         {
-            for (int ax = 0; ax < outputWidth; ax++)
+            for (int x = 0; x < outputWidth; x++)
             {
-                z(d, ay, ax) += biases[d];
+                if (maskData[y * outputWidth + x] > 0)
+                {
+                    int index = x + outputWidth * (y + outputHeight * d);
+                    outputData[index] = *outBufferData + bias;
+                    outBufferData++;
+                }
             }
         }
     }
@@ -131,7 +161,6 @@ void ConvolutionalLayer::forwardPropagate()
 
 void DeconvolutionalLayer::forwardPropagate()
 {
-    //std::cout << "Forward start " << name << std::endl;
     const Tensor<float> &input = *bottoms[0]->getOutput();
 
     if (!initDone)
@@ -158,7 +187,7 @@ void DeconvolutionalLayer::forwardPropagate()
         initDone = true;
     }
 
-    transposedConvolution(input, weights, z, filterSize, stride, pad);
+    transposedConvolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
     for (int d = 0; d < outputChannels; d++)
     {
         for (int ay = 0; ay < outputHeight; ay++)
@@ -203,7 +232,6 @@ void ConvolutionalLayer::backwardPropagate()
                 {
                     int x = stride * ax + rot180(fx, filterSize);
                     if (x < 0 || x >= inputWidth) continue;
-
 
                     for (int d = 0; d < outputChannels; d++)
                     {
