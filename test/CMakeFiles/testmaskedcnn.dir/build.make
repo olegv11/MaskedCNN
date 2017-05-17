@@ -63,15 +63,15 @@ include test/CMakeFiles/testmaskedcnn.dir/flags.make
 test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o: test/CMakeFiles/testmaskedcnn.dir/flags.make
 test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o: test/src/ConvolutionTest.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o"
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/g++-5   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o -c /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp
+	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/clang++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o -c /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp
 
 test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.i"
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/g++-5  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp > CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.i
+	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp > CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.i
 
 test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.s"
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/g++-5  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp -o CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.s
+	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp -o CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.s
 
 test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o.requires:
 
@@ -87,15 +87,15 @@ test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o.provides.build: test
 test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o: test/CMakeFiles/testmaskedcnn.dir/flags.make
 test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o: test/src/NetworkTest.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o"
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/g++-5   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o -c /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp
+	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/clang++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o -c /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp
 
 test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.i"
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/g++-5  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp > CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.i
+	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp > CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.i
 
 test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.s"
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/g++-5  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp -o CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.s
+	cd /home/oleg/Deep_learning/Thesis/MaskedCNN/test && /usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp -o CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.s
 
 test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o.requires:
 

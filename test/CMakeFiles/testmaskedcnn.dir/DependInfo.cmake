@@ -7,7 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/ConvolutionTest.cpp" "/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o"
   "/home/oleg/Deep_learning/Thesis/MaskedCNN/test/src/NetworkTest.cpp" "/home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o"
   )
-set(CMAKE_CXX_COMPILER_ID "GNU")
+set(CMAKE_CXX_COMPILER_ID "Clang")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH

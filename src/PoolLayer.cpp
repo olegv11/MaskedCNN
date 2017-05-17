@@ -1,9 +1,10 @@
 #include "PoolLayer.hpp"
 #include <limits>
+#include "ConvOps.hpp"
 namespace MaskedCNN {
 
-PoolLayer::PoolLayer(int windowWidth, int windowHeight, std::string name)
-    : windowWidth(windowWidth), windowHeight(windowHeight)
+PoolLayer::PoolLayer(int windowSize, std::string name)
+    : windowSize(windowSize)
 {
     this->name = name;
 }
@@ -21,8 +22,8 @@ void PoolLayer::forwardPropagate()
         channels = dims[0];
         inputHeight = dims[1];
         inputWidth = dims[2];
-        outputHeight = (inputHeight + windowHeight - 1) / windowHeight;
-        outputWidth = (inputWidth + windowWidth - 1) / windowWidth;
+        outputHeight = std::floor((inputHeight - windowSize) / (double)windowSize + 1);
+        outputWidth = std::floor((inputWidth - windowSize) / (double)windowSize + 1);
         output.resize({channels, outputHeight, outputWidth});
         delta.resize({channels, outputHeight, outputWidth});
         mask.resize({outputHeight, outputWidth});
@@ -31,31 +32,28 @@ void PoolLayer::forwardPropagate()
     }
 
     mask.zero();
-    for (int i = 0; i < output.channelLength(); i++)
+    convolveMaskIm2Col(prevMask, mask, buf, windowSize, windowSize, 0);
+
+    for (int j = 0; j < outputHeight; j++)
     {
-        for (int j = 0; j < outputHeight; j++)
+        for (int k = 0; k < outputWidth; k++)
         {
-            for (int k = 0; k < outputWidth; k++)
+            if (maskEnabled && mask(j,k) == 0) continue;
+            for (int i = 0; i < output.channelLength(); i++)
             {
                 float max_float = std::numeric_limits<float>::lowest();
-                bool changed = false;
-                for (int dy = 0; dy < windowHeight; dy++)
+                for (int dy = 0; dy < windowSize; dy++)
                 {
-                    for (int dx = 0; dx < windowWidth; dx++)
+                    for (int dx = 0; dx < windowSize; dx++)
                     {
-                        int y = j * windowHeight + dy;
-                        int x = k * windowWidth + dx;
+                        int y = j * windowSize + dy;
+                        int x = k * windowSize + dx;
 
                         float currentEl = 0;
 
                         if (y >= 0 && y < inputHeight && x >= 0 && x < inputWidth)
                         {
-                            currentEl = input(i, j * windowHeight + dy, k * windowWidth + dx);
-
-                            if (maskEnabled && prevMask(y,x) > 0)
-                            {
-                                changed = true;
-                            }
+                            currentEl = input(i, j * windowSize + dy, k * windowSize + dx);
                         }
 
                         if (currentEl > max_float)
@@ -64,18 +62,11 @@ void PoolLayer::forwardPropagate()
                         }
                     }
                 }
-                if (maskEnabled)
-                {
-                    if (changed)
-                    {
-                        mask(j,k) = 1;
-                    }
-                }
-
                 output(i,j,k) = max_float;
             }
         }
     }
+
 }
 
 void PoolLayer::backwardPropagate()
@@ -92,18 +83,18 @@ void PoolLayer::backwardPropagate()
             for (int k = 0; k < output.rowLength(); k++)
             {
                 float maxEl = output(i, j, k);
-                for (int dy = 0; dy < windowHeight; dy++)
+                for (int dy = 0; dy < windowSize; dy++)
                 {
-                    for (int dx = 0; dx < windowWidth; dx++)
+                    for (int dx = 0; dx < windowSize; dx++)
                     {
-                        if (maxEl == input(i, j * windowHeight + dy, k * windowWidth + dx))
+                        if (maxEl == input(i, j * windowSize + dy, k * windowSize + dx))
                         {
-                            prevDelta(i, j * windowHeight + dy, k * windowWidth + dx) =
+                            prevDelta(i, j * windowSize + dy, k * windowSize + dx) =
                                     delta(i, j, k);
                         }
                         else
                         {
-                            prevDelta(i, j * windowHeight + dy, k * windowWidth + dx) = 0;
+                            prevDelta(i, j * windowSize + dy, k * windowSize + dx) = 0;
                         }
                     }
                 }

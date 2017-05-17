@@ -26,7 +26,7 @@ namespace MaskedCNN
 class Network
 {
 public:
-    Network(std::string modelPath, int threshold);
+    Network(std::string modelPath, int width, int height, int threshold);
     void setDisplayMask(int i, bool display);
     void setDisplayMask(std::string name, bool display);
     void setMaskEnabled(bool enabled);
@@ -49,6 +49,8 @@ private:
     tms endTime;
 
     int threshold;
+
+    Tensor<float> accumMatrix;
 };
 
 }
