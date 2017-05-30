@@ -23,7 +23,6 @@ int main()
         cap.read(frame);
         cv::imshow("Camera", frame);
         auto x = net.forward(frame);
-        cv::imshow(x.front().first, x.front().second);
         cv::imshow(x[1].first, x[1].second);
         cv::imshow(x.back().first, x.back().second);
         cv::waitKey(10);

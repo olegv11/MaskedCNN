@@ -4,8 +4,13 @@
 	<Project>
 		<Option title="MaskedCNN"/>
 		<Option makefile_is_custom="1"/>
+<<<<<<< HEAD
 		<Option compiler="gcc"/>
 		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\share\;CMake Files\..\..\..\..\usr\share\OpenCV\;CMake Files\test\;"/>
+=======
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\share\;CMake Files\..\..\..\..\..\usr\share\OpenCV\;CMake Files\test\;"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN"/>
@@ -62,9 +67,10 @@
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="gcc"/>
+				<Option compiler="clang"/>
 				<Compiler>
 					<Add directory="/usr/include/opencv"/>
+<<<<<<< HEAD
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include/maskedcnn"/>
 					<Add directory="/usr/include/c++/6"/>
@@ -73,6 +79,15 @@
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+=======
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/x86_64-linux-gnu/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
@@ -88,9 +103,10 @@
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="gcc"/>
+				<Option compiler="clang"/>
 				<Compiler>
 					<Add directory="/usr/include/opencv"/>
+<<<<<<< HEAD
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include/maskedcnn"/>
 					<Add directory="/usr/include/c++/6"/>
@@ -99,6 +115,15 @@
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+=======
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/x86_64-linux-gnu/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
@@ -114,9 +139,10 @@
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN"/>
 				<Option object_output="./"/>
 				<Option type="2"/>
-				<Option compiler="gcc"/>
+				<Option compiler="clang"/>
 				<Compiler>
 					<Add directory="/usr/include/opencv"/>
+<<<<<<< HEAD
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include/maskedcnn"/>
 					<Add directory="/usr/include/c++/6"/>
@@ -125,6 +151,15 @@
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+=======
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/x86_64-linux-gnu/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
@@ -140,9 +175,10 @@
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN"/>
 				<Option object_output="./"/>
 				<Option type="2"/>
-				<Option compiler="gcc"/>
+				<Option compiler="clang"/>
 				<Compiler>
 					<Add directory="/usr/include/opencv"/>
+<<<<<<< HEAD
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include/maskedcnn"/>
 					<Add directory="/usr/include/c++/6"/>
@@ -151,6 +187,15 @@
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+=======
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/x86_64-linux-gnu/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
@@ -186,9 +231,10 @@
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN/test"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="gcc"/>
+				<Option compiler="clang"/>
 				<Compiler>
 					<Add directory="/usr/include/opencv"/>
+<<<<<<< HEAD
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include/maskedcnn"/>
 					<Add directory="/usr/include/c++/6"/>
@@ -197,6 +243,15 @@
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+=======
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/x86_64-linux-gnu/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
@@ -212,9 +267,10 @@
 				<Option working_dir="/home/oleg/Thesis/MaskedCNN/test"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="gcc"/>
+				<Option compiler="clang"/>
 				<Compiler>
 					<Add directory="/usr/include/opencv"/>
+<<<<<<< HEAD
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include"/>
 					<Add directory="/home/oleg/Thesis/MaskedCNN/include/maskedcnn"/>
 					<Add directory="/usr/include/c++/6"/>
@@ -223,6 +279,15 @@
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+=======
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include"/>
+					<Add directory="/home/oleg/Deep_learning/Thesis/MaskedCNN/include/maskedcnn"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/x86_64-linux-gnu/c++/6.3.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c++/6.3.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+>>>>>>> 85574df062953fd6a34ae85dd67e6a673dd2908f
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>

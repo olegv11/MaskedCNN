@@ -9,22 +9,19 @@ namespace MaskedCNN
 class PoolLayer : public Layer
 {
 public:
-    PoolLayer(int windowWidth, int windowHeight, std::string name = "");
+    PoolLayer(int windowSize, std::string name = "");
+    virtual void forwardPropagate() override;
+    virtual void backwardPropagate() override;
+    virtual std::vector<int> getOutputDimensions() override;
 
 private:
     int channels;
     int inputHeight;
     int inputWidth;
-    int windowWidth;
-    int windowHeight;
+    int windowSize;
     int outputHeight;
     int outputWidth;
-
-    // Layer interface
-public:
-    virtual void forwardPropagate() override;
-    virtual void backwardPropagate() override;
-    virtual std::vector<int> getOutputDimensions() override;
+    Tensor<float> buf;
 };
 
 }

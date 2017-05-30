@@ -11,6 +11,6 @@ cv::Mat maskToMat(const Tensor<float> &tensor);
 cv::Mat visualizeOutput(const Tensor<float> &tensor);
 Tensor<float> maxarg(const Tensor<float> &data);
 cv::Mat cropLike(const cv::Mat data, const cv::Mat templateImage, int offset);
-Tensor<float> diffFrames(const cv::Mat frame, const cv::Mat prevFrame, int threshold = 0);
+Tensor<float> diffFrames(const cv::Mat frame, const cv::Mat prevFrame, Tensor<float> accumMatrix, int threshold = 0);
 
 }

@@ -36,13 +36,15 @@ TEST(Network_Test, MaskedAndNormalNetworksAreEquivalent)
 
     cv::Mat frame;
     cv::Mat prevFrame;
+    cv::Mat accum;
     cap.read(prevFrame);
 
     for (int framesProcessed = 0; framesProcessed < 5; framesProcessed++)
     {
         Tensor<float> mask(std::vector<int>{prevFrame.rows, prevFrame.cols});
+        Tensor<float> accum({prevFrame.rows, prevFrame.cols});
         cap.read(frame);
-        mask = diffFrames(frame, prevFrame);
+        mask = diffFrames(frame, prevFrame, accum);
         Tensor<float> image = matToTensor(frame);
         image.add(-104.00699, -116.66877, -122.67892);
 

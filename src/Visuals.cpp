@@ -51,6 +51,7 @@ cv::Mat maskToMat(const Tensor<float>& tensor)
 cv::Mat cropLike(const cv::Mat data, const cv::Mat templateImage, int offset)
 {
     cv::Rect rect(offset, offset, templateImage.cols, templateImage.rows);
+
     cv::Mat cropped(data(rect));
 
     cv::Mat result;
@@ -120,10 +121,10 @@ Tensor<float> maxarg(const Tensor<float>& data)
 }
 
 
-Tensor<float> diffFrames(const cv::Mat frame, const cv::Mat prevFrame, int threshold)
+Tensor<float> diffFrames(const cv::Mat frame, const cv::Mat prevFrame, Tensor<float> accumMatrix, int threshold)
 {
     Tensor<float> mask(std::vector<int>{prevFrame.rows, prevFrame.cols});
-    cv::Mat diff = cv::Mat::zeros(frame.rows, frame.cols, CV_32SC3);
+    cv::Mat diff = cv::Mat::zeros(frame.rows, frame.cols, CV_8UC3);
     cv::absdiff(frame, prevFrame, diff);
 
     for (int j = 0; j < frame.rows; j++)
@@ -131,9 +132,11 @@ Tensor<float> diffFrames(const cv::Mat frame, const cv::Mat prevFrame, int thres
         for (int i = 0; i < frame.cols; i++)
         {
             cv::Vec3b x = diff.at<cv::Vec3b>(j,i);
-            if (x[0] + x[1] + x[2] > threshold)
+            accumMatrix(j,i) += x[0] + x[1] + x[2];
+            if (accumMatrix(j,i) > threshold)
             {
                 mask(j,i) = 255;
+                accumMatrix(j,i) = 0;
             }
             else
             {

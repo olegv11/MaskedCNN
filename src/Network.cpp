@@ -19,8 +19,8 @@
 namespace MaskedCNN
 {
 
-Network::Network(std::string modelPath, int threshold)
-    :layers(loadCaffeNet(modelPath, 320, 240, 3)), maskEnabled(false),
+Network::Network(std::string modelPath, int width, int height, int threshold)
+    :layers(loadCaffeNet(modelPath, width, height, 3)), maskEnabled(false),
       initDone(false), maskInitDone(false), threshold(threshold)
 {
     displayMaskSwitch.resize(layers.size());
@@ -67,11 +67,13 @@ std::vector<std::pair<std::string, cv::Mat>> Network::forward(const cv::Mat inpu
         mask.resize({input.rows, input.cols});
         image.resize({3, input.rows, input.cols});
         input.copyTo(prevFrame);
+        accumMatrix.resize({input.rows, input.cols});
+        accumMatrix.zero();
         initDone = true;
     }
 
     input.copyTo(currentFrame);
-    mask = diffFrames(currentFrame, prevFrame, threshold);
+    mask = diffFrames(currentFrame, prevFrame, accumMatrix, threshold);
     image = matToTensor(currentFrame);
     image.add(-104.00699, -116.66877, -122.67892);
 
@@ -105,7 +107,7 @@ std::vector<std::pair<std::string, cv::Mat>> Network::forward(const cv::Mat inpu
         }
         maskInitDone = true;
     }
-    result.emplace_back("Result", cropLike(visualizeOutput(maxarg(*layers.back()->getOutput())), currentFrame, 19));
+    result.emplace_back("Result", cropLike(visualizeOutput(maxarg(*layers.back()->getOutput())), currentFrame, 8));
     return result;
 }
 

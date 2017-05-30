@@ -106,7 +106,7 @@ std::vector<std::unique_ptr<Layer>> loadCaffeNet(std::string path, int width, in
         {
             const auto& param = p.pooling_param();
             assert(param.pool() == caffe::PoolingParameter_PoolMethod_MAX);
-            result.emplace_back(new PoolLayer(param.kernel_size(), param.kernel_size(), name));
+            result.emplace_back(new PoolLayer(param.kernel_size(), name));
 
             std::string bottom = p.bottom(0);
             AddBottom(bottom, result);
