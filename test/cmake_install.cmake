@@ -1,4 +1,4 @@
-# Install script for directory: /home/oleg/Deep_learning/Thesis/MaskedCNN/test
+# Install script for directory: /home/oleg/Thesis/MaskedCNN/test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

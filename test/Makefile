@@ -51,10 +51,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/oleg/Deep_learning/Thesis/MaskedCNN
+CMAKE_SOURCE_DIR = /home/oleg/Thesis/MaskedCNN
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/oleg/Deep_learning/Thesis/MaskedCNN
+CMAKE_BINARY_DIR = /home/oleg/Thesis/MaskedCNN
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -127,14 +127,14 @@ list_install_components/fast: list_install_components
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(CMAKE_COMMAND) -E cmake_progress_start /home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles /home/oleg/Deep_learning/Thesis/MaskedCNN/test/CMakeFiles/progress.marks
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/oleg/Deep_learning/Thesis/MaskedCNN/CMakeFiles 0
+	cd /home/oleg/Thesis/MaskedCNN && $(CMAKE_COMMAND) -E cmake_progress_start /home/oleg/Thesis/MaskedCNN/CMakeFiles /home/oleg/Thesis/MaskedCNN/test/CMakeFiles/progress.marks
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/oleg/Thesis/MaskedCNN/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/clean
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/clean
 .PHONY : clean
 
 # The main clean target
@@ -144,22 +144,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/preinstall
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/preinstall
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/oleg/Thesis/MaskedCNN && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 test/CMakeFiles/testmaskedcnn.dir/rule:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/testmaskedcnn.dir/rule
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/testmaskedcnn.dir/rule
 .PHONY : test/CMakeFiles/testmaskedcnn.dir/rule
 
 # Convenience name for target.
@@ -169,7 +169,7 @@ testmaskedcnn: test/CMakeFiles/testmaskedcnn.dir/rule
 
 # fast build rule for target.
 testmaskedcnn/fast:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/build
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/build
 .PHONY : testmaskedcnn/fast
 
 src/ConvolutionTest.o: src/ConvolutionTest.cpp.o
@@ -178,7 +178,7 @@ src/ConvolutionTest.o: src/ConvolutionTest.cpp.o
 
 # target to build an object file
 src/ConvolutionTest.cpp.o:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.o
 .PHONY : src/ConvolutionTest.cpp.o
 
 src/ConvolutionTest.i: src/ConvolutionTest.cpp.i
@@ -187,7 +187,7 @@ src/ConvolutionTest.i: src/ConvolutionTest.cpp.i
 
 # target to preprocess a source file
 src/ConvolutionTest.cpp.i:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.i
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.i
 .PHONY : src/ConvolutionTest.cpp.i
 
 src/ConvolutionTest.s: src/ConvolutionTest.cpp.s
@@ -196,7 +196,7 @@ src/ConvolutionTest.s: src/ConvolutionTest.cpp.s
 
 # target to generate assembly for a file
 src/ConvolutionTest.cpp.s:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.s
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/ConvolutionTest.cpp.s
 .PHONY : src/ConvolutionTest.cpp.s
 
 src/NetworkTest.o: src/NetworkTest.cpp.o
@@ -205,7 +205,7 @@ src/NetworkTest.o: src/NetworkTest.cpp.o
 
 # target to build an object file
 src/NetworkTest.cpp.o:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.o
 .PHONY : src/NetworkTest.cpp.o
 
 src/NetworkTest.i: src/NetworkTest.cpp.i
@@ -214,7 +214,7 @@ src/NetworkTest.i: src/NetworkTest.cpp.i
 
 # target to preprocess a source file
 src/NetworkTest.cpp.i:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.i
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.i
 .PHONY : src/NetworkTest.cpp.i
 
 src/NetworkTest.s: src/NetworkTest.cpp.s
@@ -223,7 +223,7 @@ src/NetworkTest.s: src/NetworkTest.cpp.s
 
 # target to generate assembly for a file
 src/NetworkTest.cpp.s:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.s
+	cd /home/oleg/Thesis/MaskedCNN && $(MAKE) -f test/CMakeFiles/testmaskedcnn.dir/build.make test/CMakeFiles/testmaskedcnn.dir/src/NetworkTest.cpp.s
 .PHONY : src/NetworkTest.cpp.s
 
 # Help Target
@@ -256,6 +256,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/oleg/Deep_learning/Thesis/MaskedCNN && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/oleg/Thesis/MaskedCNN && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

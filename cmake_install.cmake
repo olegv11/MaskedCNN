@@ -1,4 +1,4 @@
-# Install script for directory: /home/oleg/Deep_learning/Thesis/MaskedCNN
+# Install script for directory: /home/oleg/Thesis/MaskedCNN
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,7 +33,7 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/maskedcnn" TYPE STATIC_LIBRARY FILES "/home/oleg/Deep_learning/Thesis/MaskedCNN/libmaskedcnn.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/maskedcnn" TYPE STATIC_LIBRARY FILES "/home/oleg/Thesis/MaskedCNN/libmaskedcnn.a")
 endif()
 
 if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -43,7 +43,7 @@ if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMP
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/maskedcnnexe"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/oleg/Deep_learning/Thesis/MaskedCNN/maskedcnnexe")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/oleg/Thesis/MaskedCNN/maskedcnnexe")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/maskedcnnexe" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/maskedcnnexe")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -54,7 +54,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/oleg/Deep_learning/Thesis/MaskedCNN/test/cmake_install.cmake")
+  include("/home/oleg/Thesis/MaskedCNN/test/cmake_install.cmake")
 
 endif()
 
@@ -66,5 +66,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/oleg/Deep_learning/Thesis/MaskedCNN/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/oleg/Thesis/MaskedCNN/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
