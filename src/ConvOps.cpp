@@ -1,5 +1,7 @@
 #include "Tensor.hpp"
 #include "Util.hpp"
+#include "../maskedcnncuda/ConvOpsCuda.h"
+#include <cublas_v2.h>
 
 namespace MaskedCNN {
 
@@ -266,6 +268,7 @@ void col2im(const Tensor<float>& col, int inputChannels, int inputHeight, int in
     }
 }
 
+
 void convolutionIm2Col(const Tensor<float>& input, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float>& out, int filterSize, int stride, int pad)
 {
     const int outputChannels = out.dimensions()[0];
@@ -275,17 +278,39 @@ void convolutionIm2Col(const Tensor<float>& input, const Tensor<float>& filter, 
     const int inputHeight = input.dimensions()[1];
     const int inputWidth = input.dimensions()[2];
 
-    colBuffer.resize(std::vector<int>{inputChannels*filterSize*filterSize, outputHeight * outputWidth});
-
-    im2col(input, inputChannels, inputHeight, inputWidth, filterSize, pad, stride, colBuffer);
-
     int m = outputChannels;
     int n = outputHeight * outputWidth;
     int k = inputChannels * filterSize * filterSize;
 
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k,
-                1.0, filter.dataAddress(), k, colBuffer.dataAddress(),
-                n, 0., out.dataAddress(), n);
+    switch (input.position())
+    {
+    case DataPosition::UNDEFINED:
+        throw std::runtime_error("UNDEFINED POSITION");
+        break;
+    case DataPosition::CPU:
+        colBuffer.toCpu().resize(std::vector<int>{inputChannels*filterSize*filterSize, outputHeight * outputWidth});
+        im2col(input, inputChannels, inputHeight, inputWidth, filterSize, pad, stride, colBuffer);
+        std::cout << colBuffer.toString();
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k,
+                    1.0, filter.dataAddress(), k, colBuffer.dataAddress(),
+                    n, 0., out.dataAddress(), n);
+        break;
+    case DataPosition::GPU:
+        colBuffer.toGpu().resize(std::vector<int>{inputChannels*filterSize*filterSize, outputHeight * outputWidth});
+        im2col_gpu(input.gpuDataAddress(), inputChannels, inputHeight, inputWidth, filterSize, pad, stride, colBuffer.gpuDataAddress());
+        cublasStatus_t stat;
+        cublasHandle_t handle;
+        stat = cublasCreate(&handle);
+        if (stat != CUBLAS_STATUS_SUCCESS)
+        {
+            throw std::runtime_error("CUBLAS initialization failed\n");
+        }
+        float alpha = 1;
+        float beta = 1;
+        cublasSgemm_v2(handle, CUBLAS_OP_N, CUBLAS_OP_N, n, m, k,
+                       &alpha, colBuffer.gpuDataAddress(), n, filter.gpuDataAddress(), k, &beta, out.gpuDataAddress(), n);
+        break;
+    }
 }
 
 void transposedConvolutionIm2Col(const Tensor<float>& input, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float>& out, int filterSize, int stride, int pad)
@@ -334,6 +359,78 @@ void convolutionIm2ColMasked(const Tensor<float>& input, const Tensor<float>& ma
                 1.0, filter.dataAddress(), k, colBuffer.dataAddress(),
                 n, 0., outBufferData, n);
 }
+
+void transposedConvolutionIm2ColMasked(const Tensor<float>& input, Tensor<float>& inputBuffer, const Tensor<float>& prevMask, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float>& anotherBuffer, Tensor<float>& out, int filterSize, int stride, int pad)
+{
+    const int outputChannels = out.dimensions()[0];
+    const int outputHeight = out.dimensions()[1];
+    const int outputWidth = out.dimensions()[2];
+    const int inputChannels = input.dimensions()[0];
+    const int inputHeight = input.dimensions()[1];
+    const int inputWidth = input.dimensions()[2];
+
+    colBuffer.resize(std::vector<int>{outputChannels*filterSize*filterSize, inputHeight * inputWidth});
+    anotherBuffer.resize(std::vector<int>{outputChannels*filterSize*filterSize, inputHeight * inputWidth});
+    inputBuffer.resize(input.dimensions());
+    inputBuffer.zero();
+    anotherBuffer.zero();
+
+    float *inputBufferData = nullptr;
+    float const *prevMaskData = nullptr;
+    float const *inputData = nullptr;
+    int patches = 0;
+
+    const int channelSize = inputHeight * inputWidth;
+    for (int d = 0; d < inputChannels; d++)
+    {
+        prevMaskData = prevMask.dataAddress();
+        inputBufferData = inputBuffer.dataAddress() + d * channelSize;
+        inputData = input.dataAddress() + d * channelSize;
+        for (int y = 0; y < inputHeight; y++)
+        {
+            for (int x = 0; x < inputWidth; x++)
+            {
+                if ((*prevMaskData) != 0)
+                {
+                    patches++;
+                    *inputBufferData = *inputData;
+                    inputBufferData++;
+                }
+                prevMaskData++;
+                inputData++;
+            }
+        }
+    }
+    assert(patches % inputChannels == 0);
+    patches /= inputChannels;
+
+
+    int m = outputChannels * filterSize * filterSize;
+    int n = inputHeight * inputWidth;
+    int k = inputChannels;
+
+    cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, patches, k,
+                1.0, filter.dataAddress(), m, inputBuffer.dataAddress(),
+                n, 0., anotherBuffer.dataAddress(), patches);
+
+    prevMaskData = prevMask.dataAddress();
+    auto anotherBufferData = anotherBuffer.dataAddress();
+    int p = 0;
+    for (int pos = 0; pos < channelSize; pos++)
+    {
+        if (prevMaskData[pos] != 0)
+        {
+            for (int i = 0; i < outputChannels*filterSize*filterSize; i++)
+            {
+                colBuffer(i, pos) = anotherBufferData[i * patches + p];
+            }
+            p++;
+        }
+    }
+
+    col2im(colBuffer, outputChannels, outputHeight, outputWidth, filterSize, pad, stride, out);
+}
+
 
 void convolutionIm2ColMaskedPlaceBufferBack(const Tensor<float>& mask, Tensor<float> &outBuffer, Tensor<float>& out)
 {
@@ -385,6 +482,27 @@ void convolveMaskIm2Col(const Tensor<float>& prevMask, Tensor<float>& mask, Tens
     convolutionIm2Col(deepPrevMask, weights, colBuffer, deepMask, filterSize, stride, pad);
 }
 
+
+void deconvolveMaskCol2Im(const Tensor<float>& prevMask, Tensor<float>& mask, Tensor<float>& colBuffer, int filterSize, int stride, int pad)
+{
+    const int outputHeight = mask.dimensions()[0];
+    const int outputWidth = mask.dimensions()[1];
+    const int inputHeight = prevMask.dimensions()[0];
+    const int inputWidth = prevMask.dimensions()[1];
+
+    mask.zero();
+
+    Tensor<float> weights(std::vector<int>{1,1,filterSize,filterSize});
+    weights.fillwith(1.0);
+
+    const Tensor<float> deepPrevMask(prevMask, shallow_copy{});
+    deepPrevMask.reshape(std::vector<int>{1, inputHeight, inputWidth});
+
+    Tensor<float> deepMask(mask, shallow_copy{});
+    deepMask.reshape(std::vector<int>{1, outputHeight, outputWidth});
+
+    transposedConvolutionIm2Col(deepPrevMask, weights, colBuffer, deepMask, filterSize, stride, pad);
+}
 
 
 }

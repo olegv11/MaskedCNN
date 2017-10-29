@@ -27,6 +27,8 @@ protected:
     Tensor<float> colBuffer;
     Tensor<float> outBuffer;
     Tensor<float> maskColBuffer;
+
+    std::vector<int> dimensions;
 };
 
 class ConvolutionalLayer : public BaseConvolutionalLayer
@@ -52,6 +54,9 @@ public:
                            Tensor<float>&& biases, int stride, int pad, std::string name = "");
     virtual void forwardPropagate() override;
     virtual void backwardPropagate() override;
+
+private:
+    Tensor<float> additionalBuffer;
 };
 
 }

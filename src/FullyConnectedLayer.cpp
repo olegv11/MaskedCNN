@@ -15,6 +15,17 @@ FullyConnectedLayer::FullyConnectedLayer(std::unique_ptr<Activation> activation,
     this->name = name;
 }
 
+FullyConnectedLayer::FullyConnectedLayer(std::unique_ptr<Activation> activation, Tensor<float> &&weights, Tensor<float> &&biases, std::string name)
+    :Layer(std::move(weights), std::move(biases), name) , activation(std::move(activation))
+{
+    neurons = this->weights.columnLength();
+    inputCount = this->weights.rowLength();
+    z.resize({ neurons });
+    dy_dz.resize({ neurons });
+    delta.resize({ neurons });
+    output.resize({ neurons });
+}
+
 
 void FullyConnectedLayer::forwardPropagate()
 {

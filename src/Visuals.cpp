@@ -1,7 +1,12 @@
 #include "Visuals.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <random>
 
+
+static std::random_device rd;
+static std::mt19937 gen(rd());
+std::uniform_real_distribution<double> distr(0.0, 1.0);
 
 namespace MaskedCNN {
 
@@ -25,6 +30,33 @@ Tensor<float> matToTensor(const cv::Mat& image)
     return result;
 }
 
+Tensor<float> labelToTensor(const cv::Mat& mask, int label)
+{
+    Tensor<float> result({mask.rows, mask.cols});
+    if (mask.type() != CV_8UC3)
+    {
+        throw std::exception();
+    }
+
+    for (int y = 0; y < mask.rows; y++)
+    {
+        for (int x = 0; x < mask.cols; x++)
+        {
+            if (mask.at<cv::Vec3b>(y,x)[0] > 100)
+            {
+                result(y,x) = label;
+            }
+            else
+            {
+                result(y,x) = 0;
+            }
+        }
+    }
+
+    return result;
+}
+
+
 cv::Mat maskToMat(const Tensor<float>& tensor)
 {
     cv::Mat image(tensor.columnLength(), tensor.rowLength(), CV_8UC1);
@@ -46,6 +78,24 @@ cv::Mat maskToMat(const Tensor<float>& tensor)
     }
 
     return image;
+}
+
+Tensor<float> cropLike(const Tensor<float> data, const cv::Mat templateImage, int offset)
+{
+    int rows = templateImage.rows;
+    int cols = templateImage.cols;
+
+    Tensor<float> result({rows, cols});
+
+    for (int y = 0; y < rows; y++)
+    {
+        for (int x = 0; x < cols; x++)
+        {
+            result(y, x) = data(y + offset, x + offset);
+        }
+    }
+
+    return result;
 }
 
 cv::Mat cropLike(const cv::Mat data, const cv::Mat templateImage, int offset)
@@ -146,6 +196,77 @@ Tensor<float> diffFrames(const cv::Mat frame, const cv::Mat prevFrame, Tensor<fl
     }
 
     return mask;
+}
+
+void addNoiseToVideo(std::string filename, double prob)
+{
+    cv::VideoCapture cap(filename);
+    cv::VideoWriter writer(filename + ".noisy.avi", CV_FOURCC('D','I','V','X'), 30, cv::Size(640, 360));
+    if (!writer.isOpened())
+    {
+        throw std::exception();
+    }
+    cv::Mat frame;
+    cv::Mat noise;
+    while (cap.read(frame))
+    {
+        noise = saltAndPepper(frame, prob);
+        writer << noise;
+    }
+}
+
+cv::Mat saltAndPepper(const cv::Mat frame, double prob)
+{
+    cv::Mat noisy(frame.rows, frame.cols, CV_8UC3);
+    frame.copyTo(noisy);
+
+    for (int j = 0; j < frame.rows; j++)
+    {
+        for (int i = 0; i < frame.cols; i++)
+        {
+            cv::Vec3b &x = noisy.at<cv::Vec3b>(j,i);
+            double var = distr(gen);
+            if (var < prob)
+            {
+                x[0] = 0;
+                x[1] = 0;
+                x[2] = 0;
+            }
+            else if (var > 1 - prob)
+            {
+                x[0] = 255;
+                x[1] = 255;
+                x[2] = 255;
+            }
+        }
+    }
+
+    return noisy;
+}
+
+void DenoiseVideo(std::string filename, int window)
+{
+    cv::VideoCapture cap(filename);
+    cv::VideoWriter writer(filename + ".denoised.avi", CV_FOURCC('D','I','V','X'), 30, cv::Size(640, 360));
+    if (!writer.isOpened())
+    {
+        throw std::exception();
+    }
+    cv::Mat frame;
+    cv::Mat denoised;
+    while (cap.read(frame))
+    {
+        denoised = median(frame, window);
+        writer << frame;
+    }
+}
+
+
+cv::Mat median(const cv::Mat frame, int window)
+{
+    cv::Mat denoised(frame.rows, frame.cols, CV_8UC3);
+    cv::medianBlur(frame, denoised, window);
+    return denoised;
 }
 
 }

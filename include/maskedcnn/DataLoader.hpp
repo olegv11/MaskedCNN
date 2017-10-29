@@ -3,6 +3,8 @@
 #include <vector>
 #include "Tensor.hpp"
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 namespace MaskedCNN
 {
@@ -37,6 +39,27 @@ private:
     std::vector<int> trainLabels;
     std::vector<Tensor<float>> testImages;
     std::vector<int> testLabels;
+};
+
+
+class YoutubeMasksDataLoader
+{
+public:
+    YoutubeMasksDataLoader(std::string path);
+    struct Item
+    {
+        int label;
+        cv::Mat image;
+        cv::Mat mask;
+    };
+
+    std::vector<Item> loadAllItems();
+
+
+private:
+    void loadLabels();
+    std::string path;
+    std::vector<std::string> labels;
 };
 
 }

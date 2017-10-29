@@ -16,6 +16,9 @@ void transposedConvolutionIm2Col(const Tensor<float>& input, const Tensor<float>
 void convolutionIm2ColMasked(const Tensor<float>& input, const Tensor<float>& mask, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float> &outBuffer, Tensor<float>& out, int filterSize, int stride, int pad);
 void convolutionIm2ColMaskedPlaceBufferBack(const Tensor<float>& mask, Tensor<float> &outBuffer, Tensor<float>& out);
 void convolveMaskIm2Col(const Tensor<float>& prevMask, Tensor<float>& mask, Tensor<float>& colBuffer, int filterSize, int stride, int pad);
+void deconvolveMaskCol2Im(const Tensor<float>& prevMask, Tensor<float>& mask, Tensor<float>& colBuffer, int filterSize, int stride, int pad);
+void transposedConvolutionIm2ColMasked(const Tensor<float>& input, Tensor<float>& inputBuffer, const Tensor<float>& prevMask, const Tensor<float>& filter, Tensor<float> &colBuffer, Tensor<float>& anotherBuffer, Tensor<float>& out, int filterSize, int stride, int pad);
+void col2imMasked(const Tensor<float>& col, const Tensor<float>& prevMask, int patches, int inputChannels, int inputHeight, int inputWidth, int filterSize, int pad, int stride, Tensor<float>& im);
 
 
 

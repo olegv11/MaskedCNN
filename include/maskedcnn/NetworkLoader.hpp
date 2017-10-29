@@ -16,7 +16,7 @@
 
 namespace MaskedCNN {
 
-std::vector<std::unique_ptr<Layer>> loadCaffeNet(std::string path, int width, int height, int channels);
+std::vector<std::unique_ptr<Layer>> loadCaffeNet(std::string path);
 
 
 }

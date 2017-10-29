@@ -20,6 +20,13 @@ std::vector<int> InputLayer::getOutputDimensions()
 
 void InputLayer::setInput(const Tensor<float> input)
 {
+    if (!initDone)
+    {
+        auto inputDiemnsions = input.dimensions();
+        output.resize(inputDiemnsions);
+        delta.resize(inputDiemnsions);
+    }
+
     output = input;
 }
 

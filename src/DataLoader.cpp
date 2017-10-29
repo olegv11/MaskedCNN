@@ -3,9 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+
+#include<dirent.h>
 
 namespace MaskedCNN
 {
@@ -114,6 +113,59 @@ void CIFARDataLoader::loadSmallData()
 {
     loadLabels();
     loadTrainDataSmall();
+}
+
+YoutubeMasksDataLoader::YoutubeMasksDataLoader(std::string path)
+    : path(path)
+{
+    loadLabels();
+}
+
+std::vector<YoutubeMasksDataLoader::Item> YoutubeMasksDataLoader::loadAllItems()
+{
+    std::ifstream testFile(path + "selected");
+    std::string line;
+
+    std::vector<YoutubeMasksDataLoader::Item> result;
+
+    while (testFile)
+    {
+        std::getline(testFile, line);
+        if (!line.empty())
+        {
+            std::istringstream sStream(line);
+            std::string imagename, maskname;
+            std::string label;
+            sStream >> label >> imagename >> maskname;
+
+            YoutubeMasksDataLoader::Item item;
+            item.label = std::find(labels.begin(), labels.end(), label) - labels.begin();
+            cv::Mat i = cv::imread(imagename, CV_LOAD_IMAGE_COLOR);
+            cv::resize(i, item.image, cv::Size(640, 360));
+            cv::Mat m = cv::imread(maskname, CV_LOAD_IMAGE_COLOR);
+
+            cv::resize(m, item.mask, item.image.size());
+
+            result.emplace_back(std::move(item));
+        }
+    }
+
+    return result;
+}
+
+void YoutubeMasksDataLoader::loadLabels()
+{
+    std::ifstream labelFile(path + "labels");
+    std::string line;
+
+    while (labelFile)
+    {
+        std::getline(labelFile, line);
+        if (!line.empty())
+        {
+            labels.push_back(line);
+        }
+    }
 }
 
 

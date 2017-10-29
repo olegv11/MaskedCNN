@@ -75,15 +75,16 @@ DeconvolutionalLayer::DeconvolutionalLayer(std::unique_ptr<Activation> activatio
 void ConvolutionalLayer::forwardPropagate()
 {
     const Tensor<float> &input = *bottoms[0]->getOutput();
+    auto dims = input.dimensions();
 
-    if (!initDone)
+    if (!initDone || dims != dimensions)
     {
         if (isTraining)
         {
             initializeWeightsNormalDistrCorrectedVar();
         }
 
-        auto dims = input.dimensions();
+        dimensions = dims;
         assert(dims.size() == 3);
         assert(filterDepth == dims[0]);
         inputHeight = dims[1];
@@ -97,6 +98,7 @@ void ConvolutionalLayer::forwardPropagate()
         delta.resize({outputChannels, outputHeight, outputWidth});
         output.resize({outputChannels, outputHeight, outputWidth});
         mask.resize({outputHeight, outputWidth});
+        mask.fillwith(1);
 
         initDone = true;
     }
@@ -162,15 +164,16 @@ void ConvolutionalLayer::activateOutBuffer()
 void DeconvolutionalLayer::forwardPropagate()
 {
     const Tensor<float> &input = *bottoms[0]->getOutput();
+    auto dims = input.dimensions();
 
-    if (!initDone)
+    if (!initDone || dims != dimensions)
     {
         if (isTraining)
         {
             initializeWeightsNormalDistrCorrectedVar();
         }
 
-        auto dims = input.dimensions();
+        dimensions = dims;
         assert(dims.size() == 3);
         assert(filterDepth == dims[0]);
         inputHeight = dims[1];
@@ -183,20 +186,20 @@ void DeconvolutionalLayer::forwardPropagate()
         dy_dz.resize({outputChannels, outputHeight, outputWidth});
         delta.resize({outputChannels, outputHeight, outputWidth});
         output.resize({outputChannels, outputHeight, outputWidth});
+        mask.resize({outputHeight, outputWidth});
 
         initDone = true;
     }
 
-    transposedConvolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
-    for (int d = 0; d < outputChannels; d++)
+    if (maskEnabled)
     {
-        for (int ay = 0; ay < outputHeight; ay++)
-        {
-            for (int ax = 0; ax < outputWidth; ax++)
-            {
-                z(d, ay, ax) += biases[d];
-            }
-        }
+        const auto& prevMask = *bottoms[0]->getMask();
+        deconvolveMaskCol2Im(prevMask, mask, maskColBuffer, filterSize, stride, pad);
+        transposedConvolutionIm2ColMasked(input, outBuffer, prevMask, weights, colBuffer, additionalBuffer, z, filterSize, stride, pad);
+    }
+    else
+    {
+        transposedConvolutionIm2Col(input, weights, colBuffer, z, filterSize, stride, pad);
     }
 
     activation->activate(&z[0], &output[0], &dy_dz[0], output.elementCount());

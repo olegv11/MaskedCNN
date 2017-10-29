@@ -26,12 +26,16 @@ namespace MaskedCNN
 class Network
 {
 public:
-    Network(std::string modelPath, int width, int height, int threshold);
+    Network(std::vector<std::unique_ptr<Layer>> layers, int threshold);
+    Network(std::string modelPath, int threshold);
     void setDisplayMask(int i, bool display);
     void setDisplayMask(std::string name, bool display);
     void setMaskEnabled(bool enabled);
-    std::vector<std::pair<std::string, cv::Mat>> forward(const cv::Mat input);
+    void setThreshold(int threshold);
+    std::vector<std::pair<std::string, cv::Mat>> forward(const cv::Mat &input);
+    void dummyForward(const Tensor<float> &input, const Tensor<float> &mask);
     std::vector<std::string> layerNames() const;
+    Tensor<float> getOutput();
 
     long forwardTime() const;
 

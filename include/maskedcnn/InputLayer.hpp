@@ -7,12 +7,10 @@ namespace MaskedCNN
 class InputLayer : public Layer {
 
 public:
-    InputLayer(const std::vector<int> inputDimensions, std::string name)
+    InputLayer(std::string name)
     : Layer()
     {
         this->name = name;
-        output.resize(inputDimensions);
-        delta.resize(inputDimensions);
     }
 
     virtual void forwardPropagate() override;
